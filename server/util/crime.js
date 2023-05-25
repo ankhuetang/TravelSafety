@@ -17,7 +17,8 @@ async function getSafetyScore(address){
     try {
         location = await getCoordsForAddress(address);
     } catch (error) {
-        return next(error);
+        console.error(error);
+        return;
     }
 
     var amadeus = new Amadeus({

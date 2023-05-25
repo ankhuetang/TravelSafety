@@ -3,7 +3,7 @@ const axios = require('axios');
 
 const API_KEY = 'AIzaSyAODuggEvXIRw1jzl5pcLQwj8GSz3fxAxI';
 
-// const address = "212 Huxley Avenue, Providence";
+const address = "212 Huxley Avenue, Providence";
 
 async function getCoordsForAddress(address) {
   const response = await axios.get(
@@ -23,10 +23,10 @@ async function getCoordsForAddress(address) {
   return coordinates;
 }
 
-// getCoordsForAddress(address).then((result)=>{
-//     console.log(result)
-// }).catch((err)=>{
-//     console.log(err)
-// })
+getCoordsForAddress(address).then((result)=>{
+    console.log(result)
+}).catch((err)=>{
+    console.log(err)
+})
 
 module.exports = getCoordsForAddress;
