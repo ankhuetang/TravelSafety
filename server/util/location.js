@@ -1,9 +1,9 @@
 //geoCoding: get location for an address
 const axios = require('axios');
 
-const API_KEY = 'AIzaSyAODuggEvXIRw1jzl5pcLQwj8GSz3fxAxI';
+const API_KEY = 'AIzaSyAiI878a7u0r8XDIRtieYfq5D3XYd9iM2w';
 
-const address = "212 Huxley Avenue, Providence";
+// const address = "212 Huxley Avenue, Providence";
 
 async function getCoordsForAddress(address) {
   const response = await axios.get(
@@ -23,10 +23,10 @@ async function getCoordsForAddress(address) {
   return coordinates;
 }
 
-getCoordsForAddress(address).then((result)=>{
-    console.log(result)
-}).catch((err)=>{
-    console.log(err)
-})
+// getCoordsForAddress(address).then((result)=>{
+//     console.log(result)
+// }).catch((err)=>{
+//     console.log(err)
+// })
 
 module.exports = getCoordsForAddress;
