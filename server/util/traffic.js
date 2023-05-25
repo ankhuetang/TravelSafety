@@ -8,12 +8,12 @@ function getBoundsFromLatLng(lat, lng, radiusInKm){
     var lat_change = radiusInKm/111.2;
     var lon_change = Math.abs(Math.cos(lat*(Math.PI/180)));
     var bounds = { 
-        lat_min : lat - lat_change,
-        lon_min : lng - lon_change,
-        lat_max : lat + lat_change,
-        lon_max : lng + lon_change
+        lat_min: (lat - lat_change).toFixed(3),
+        lon_min: (lng - lon_change).toFixed(3),
+        lat_max: (lat + lat_change).toFixed(3),
+        lon_max: (lng + lon_change).toFixed(3)
     };
-    return `${bounds.lat_min}, ${bounds.lon_min}, ${bounds.lat_max}, ${bounds.lon_max}`;
+    return `${bounds.lat_min},${bounds.lon_min},${bounds.lat_max},${bounds.lon_max}`;
 }
 
 const address = "Barcelona";
@@ -29,8 +29,7 @@ async function getTrafficInfo(address) {
 
     let boundingBox;
     try {
-        boundingBox = getBoundsFromLatLng(location.lat, location.lon, 2);
-        console.log(boundingBox);
+        boundingBox = getBoundsFromLatLng(location.lat, location.lng, 2);
     } catch (error) {
         console.log('Cant calculate boundingBox');
     }
@@ -38,10 +37,10 @@ async function getTrafficInfo(address) {
     const response = await axios.get(`http://dev.virtualearth.net/REST/v1/Traffic/Incidents/${boundingBox}?key=${API_KEY}`);
 
     const data = response.data;
-    if (!data || response.statusCode !== 200){
+
+    if (!data || data.statusCode !== 200){
         throw new Error("No data available")
     }
-
     return data;
 }
 
