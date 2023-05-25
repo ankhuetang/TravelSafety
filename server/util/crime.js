@@ -1,3 +1,5 @@
+const getCoordsForAddress = require("./location");
+
 var Amadeus = require("amadeus");
 
 const API_KEY = 'SCIJbm8FW1PGvdURVLS8F9F1uInZDem3'
@@ -8,15 +10,24 @@ const API_SECRET = 'U6OftKerP93GZVtl'
 //     longitude: -73.971416,
 // }
 
-async function getSafetyScore(location){
+const address = "Barcelona";
+
+async function getSafetyScore(address){
+    let location;
+    try {
+        location = await getCoordsForAddress(address);
+    } catch (error) {
+        return next(error);
+    }
+
     var amadeus = new Amadeus({
         clientId: API_KEY,
         clientSecret: API_SECRET
     });
     
     const response = await amadeus.safety.safetyRatedLocations.get({
-        latitude: location.latitude,
-        longitude: location.longitudee,
+        latitude: location.lat,
+        longitude: location.lng,
         radius: 1
     })
 
@@ -28,12 +39,12 @@ async function getSafetyScore(location){
     return data;
 }
 
-// getSafetyScore(location)
-//     .then((result) => {
-//         console.log(result);
-//     })
-//     .catch((error) => {
-//         console.error(error);
-//     });
+getSafetyScore(address)
+    .then((result) => {
+        console.log(result);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
 
 module.exports = getSafetyScore;
