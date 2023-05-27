@@ -7,7 +7,7 @@ require('dotenv').config({ path: '../.env' });
 
 const API_KEY = process.env.TRAFFIC_API_KEY;
 const address = "Barcelona";
-
+ 
 async function getTrafficInfo(address) {
     let location;
     try {
