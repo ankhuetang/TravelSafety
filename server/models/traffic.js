@@ -2,12 +2,11 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
-
 const trafficSchema = new Schema({
   description: { type: String, required: true },
   detour: { type: String},
   location: {
-    lat: { type: Number, required: true },
+    lat: { type: Number, required: true },  
     lng: { type: Number, required: true }
   },
   roadClosed: {type: Boolean, required: true},
