@@ -1,4 +1,5 @@
 const getCoordsForAddress = require("./location");
+require('dotenv').config({ path: '../.env' });
 
 var Amadeus = require("amadeus");
 
