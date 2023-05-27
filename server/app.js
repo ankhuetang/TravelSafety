@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 
 const app = express(); 
 
-mongoose.connect(
-    ''
-).then(()=>{
-    app.listen(5000);
-}).catch(err => {
-    console.log(err);
-})
+// mongoose.connect(
+//     ''
+// ).then(()=>{
+//     app.listen(5000);
+// }).catch(err => {
+//     console.log(err);
+// })
