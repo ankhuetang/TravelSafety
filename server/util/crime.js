@@ -2,8 +2,8 @@ const getCoordsForAddress = require("./location");
 
 var Amadeus = require("amadeus");
 
-const API_KEY = 'SCIJbm8FW1PGvdURVLS8F9F1uInZDem3'
-const API_SECRET = 'U6OftKerP93GZVtl'
+const API_KEY = process.env.CRIME_API_KEY
+const API_SECRET = process.env.CRIME_API_SECRET
 
 // const location = {
 //     latitude: 40.767663,

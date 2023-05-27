@@ -1,7 +1,7 @@
 //geoCoding: get location for an address
 const axios = require('axios');
 
-const API_KEY = 'AIzaSyAODuggEvXIRw1jzl5pcLQwj8GSz3fxAxI';
+const API_KEY = process.env.GOOGLE_API_KEY;
 
 // const address = "212 Huxley Avenue, Providence";
 
