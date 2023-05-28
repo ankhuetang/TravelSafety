@@ -1,13 +1,9 @@
 import React, { useState } from 'react'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import SearchBar from './SearchBar.js'
+import "./Map.css"
 const API_KEY = "AIzaSyDI4HgUw9Aw8eMrXx5jcAXvimyJLB4CS9g"
 
-
-const containerStyle = {
-  width: '100%',
-  height: '100vh'
-};
 
 const center = {
   lat: 33.56,
@@ -25,17 +21,20 @@ function MapContainer() {
       googleMapsApiKey={API_KEY}
       libraries={["places"]}
     >
-      <div className="search-bar-container">
-        <SearchBar setSelected={setSelected} />
+      <div className="map-container">
+        <div className="search-bar-container">
+          <SearchBar setSelected={setSelected} />
+        </div>
+        <div className="map">
+          <GoogleMap
+            mapContainerClassName="map-inner"
+            center={center}
+            zoom={10}
+          >
+            {selected && <Marker position={selected} onLoad={onLoad} />}
+          </GoogleMap>
+        </div>
       </div>
-
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={10}
-      >
-        {selected && <Marker position={selected} onLoad={onLoad}  />}
-      </GoogleMap>
     </LoadScript>
   )
 }

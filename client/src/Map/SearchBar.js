@@ -36,11 +36,11 @@ const SearchBar = ({ setSelected }) => {
                 value={value} 
                 onChange={(e) => setValue(e.target.value)} 
                 disabled={!ready} 
-                className="combobox-input" 
+                className="combobox-input"
                 placeholder="Search an address" />
-            <ComboboxPopover>
-                <ComboboxList>
-                    { status === "OK" && data.map(({place_id, description}) => (<ComboboxOption key={place_id} value={description}/>))}
+            <ComboboxPopover className="combobox-popover">
+                <ComboboxList className="combobox-list">
+                    { status === "OK" && data.map(({place_id, description}) => (<ComboboxOption className="combobox-option" key={place_id} value={description}/>))}
                 </ComboboxList>
             </ComboboxPopover>
         
