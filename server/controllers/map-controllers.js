@@ -11,6 +11,21 @@ const Traffic = require('../models/traffic');
 const Place = require('../models/place');
 const User = require('../models/user');
 
+// Only req, res, next, other util
+const getPlaceByAddress = async (req, res, next) => {
+	// 1a. Get lat, lon from address
+	// const { address } = req.body;
+	// 1b. Save place
+	// 2. Get Traffic documents using GeoSearch
+	// 3a. Check if no doc return, then make req to api
+	// 3b. Save traffic (mongo)
+	// 4.Get Crime by address
+	// 5a. Check if no doc return, then make req to api
+	// 5b. Save crime (mongo)
+	// 6. Respond Object (2 key: crime, traffic)
+};
+// Todo: Rename crime
+
 //createCrime (push data into database)
 const createCrime = async (req, res, next) => {
 	const { address } = req.body;
@@ -47,6 +62,41 @@ const createCrime = async (req, res, next) => {
 };
 
 //createTraffic
+const createTraffic = async (req, res, next) => {
+	const { address } = req.body;
+
+	let trafficInfo;
+	try {
+		trafficInfo = getTrafficInfo(address);
+	} catch (error) {
+		return next(error);
+	}
+
+	trafficInfo.map(async (trafficInfo) => {
+		const createdTraffic = new Traffic({
+			description: trafficInfo.description,
+			detour: trafficInfo.detour,
+			location: {
+				lat: trafficInfo.geoCode.latitude,
+				lng: trafficInfo.geoCode.longitude,
+			},
+			roadClosed: trafficInfo.roadClosed,
+			type: trafficInfo.type,
+		});
+
+		try {
+			const sess = await mongoose.startSession();
+			sess.startTransaction();
+			await createdTraffic.save({ session: sess });
+			await sess.commitTransaction();
+		} catch (error) {
+			return next(error);
+		}
+
+		console.log(createdTraffic);
+		res.status(201).json({ traffic: createdTraffic });
+	});
+};
 
 //getCrimebyaddress (retrieve data from database and sends back response)
 const getCrimeByAddress = async (req, res, next) => {
@@ -68,6 +118,23 @@ const getCrimeByAddress = async (req, res, next) => {
 };
 
 //getTrafficbyaddress
+const getTrafficByAddress = async (req, res, next) => {
+	const { address } = req.body;
+
+	let traffic;
+	try {
+		traffic = await Traffic.find({ address: address });
+	} catch (err) {
+		return next(err);
+	}
+
+	if (!traffic) {
+		const error = new Error('Could not find traffic for given address');
+		return next(error);
+	}
+
+	res.json({ traffic: traffic.toObject({ getters: true }) });
+};
 
 //createPlace: getCrimeForAddress + getTrafficForAddress => push under a long/lat
 const createPlace = async (req, res, next) => {
@@ -154,3 +221,5 @@ exports.createCrime = createCrime;
 exports.getCrimeByAddress = getCrimeByAddress;
 exports.createPlace = createPlace;
 exports.getPlacesByUserId = getPlacesByUserId;
+exports.createTraffic = createTraffic;
+exports.getTrafficByAddress = getTrafficByAddress;
