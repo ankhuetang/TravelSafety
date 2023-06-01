@@ -21,7 +21,7 @@ const crimeSchema = new Schema({
 		theft: { type: Number, required: true },
 		women: { type: Number, required: false },
 	},
-	place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a crime document belongs to only 1 place
+	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a crime document belongs to only 1 place
 });
 
 // Expire lau hon (crime data lau outdated)
