@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const getSafetyScore = require('../util/crime');
 const getCoordsForAddress = require('../util/location');
+const getTrafficInfo = require('../util/traffic');
 
 const Crime = require('../models/crime');
 const Traffic = require('../models/traffic');
@@ -14,126 +15,61 @@ const User = require('../models/user');
 // Only req, res, next, other util
 const getPlaceByAddress = async (req, res, next) => {
 	// 1a. Get lat, lon from address
-	// const { address } = req.body;
-	// 1b. Save place
-	// 2. Get Traffic documents using GeoSearch
-	// 3a. Check if no doc return, then make req to api
-	// 3b. Save traffic (mongo)
-	// 4.Get Crime by address
-	// 5a. Check if no doc return, then make req to api
-	// 5b. Save crime (mongo)
-	// 6. Respond Object (2 key: crime, traffic)
-};
-// Todo: Rename crime
+	const { address, userId } = req.body;
 
-//createCrime (push data into database)
-const createCrime = async (req, res, next) => {
-	const { address } = req.body;
-
-	let safetyScores;
+	let coordinates;
 	try {
-		safetyScores = await getSafetyScore(address);
-	} catch (err) {
-		return next(err);
-	}
-
-	safetyScores.map(async (safetyScore) => {
-		const createdCrime = new Crime({
-			name: safetyScore.name,
-			subType: safetyScore.subType,
-			location: {
-				lat: safetyScore.geoCode.latitude,
-				lng: safetyScore.geoCode.longitude,
-			},
-			safetyScore: safetyScore.safetyScore,
-		});
-
-		try {
-			const sess = await mongoose.startSession();
-			sess.startTransaction();
-			await createdCrime.save({ session: sess });
-			await sess.commitTransaction();
-		} catch (err) {
-			return next(err);
-		}
-
-		res.status(201).json({ crime: createdCrime });
-	});
-};
-
-//createTraffic
-const createTraffic = async (req, res, next) => {
-	const { address } = req.body;
-
-	let trafficInfo;
-	try {
-		trafficInfo = getTrafficInfo(address);
+		coordinates = await getCoordsForAddress(address);
 	} catch (error) {
 		return next(error);
 	}
-
-	trafficInfo.map(async (trafficInfo) => {
-		const createdTraffic = new Traffic({
-			description: trafficInfo.description,
-			detour: trafficInfo.detour,
-			location: {
-				lat: trafficInfo.geoCode.latitude,
-				lng: trafficInfo.geoCode.longitude,
-			},
-			roadClosed: trafficInfo.roadClosed,
-			type: trafficInfo.type,
-		});
-
-		try {
-			const sess = await mongoose.startSession();
-			sess.startTransaction();
-			await createdTraffic.save({ session: sess });
-			await sess.commitTransaction();
-		} catch (error) {
-			return next(error);
-		}
-
-		console.log(createdTraffic);
-		res.status(201).json({ traffic: createdTraffic });
-	});
-};
-
-//getCrimebyaddress (retrieve data from database and sends back response)
-const getCrimeByAddress = async (req, res, next) => {
-	const { address } = req.body;
-
-	let crime;
+	// 1b. Check if place exist:
+	let place;
 	try {
-		crime = await Crime.find({ name: address });
-	} catch (err) {
-		return next(err);
-	}
-
-	if (!crime) {
-		const error = new Error('Could not find crime for given address');
+		place = await getPlaceByAddress(address);
+	} catch (error) {
 		return next(error);
 	}
+	// 1c. Save place
+	if (!place) {
+		createPlace(address);
+	}
 
-	res.json({ crime: crime.toObject({ getters: true }) });
-};
-
-//getTrafficbyaddress
-const getTrafficByAddress = async (req, res, next) => {
-	const { address } = req.body;
-
+	// 2. Get Traffic documents using GeoSearch
 	let traffic;
 	try {
-		traffic = await Traffic.find({ address: address });
-	} catch (err) {
-		return next(err);
-	}
-
-	if (!traffic) {
-		const error = new Error('Could not find traffic for given address');
+		traffic = await getTrafficByLocation(coordinates);
+	} catch (error) {
 		return next(error);
 	}
+	// 3a. Check if no doc return, then make req to api
+	if (!traffic) {
+		const newTrafficInfo = getTrafficInfo(address);
 
-	res.json({ traffic: traffic.toObject({ getters: true }) });
+		// 3b. Save traffic (mongo)
+		traffic = createTraffic(newTrafficInfo);
+	}
+
+	// 4.Get SafetyScore by address
+	let safetyScore;
+	try {
+		safetyScore = await getSafetyScore(address);
+	} catch (error) {
+		return next(error);
+	}
+	// 5a. Check if no doc return, then make req to api
+	if (!safetyScore) {
+		const newSafetyScore = getSafetyByLocation(coordinates);
+
+		// 5b. Save safetyScore (mongo)
+		safetyScore = createSafety(newSafetyScore);
+	}
+
+	// 6. Respond Object (2 key: crime, traffic)
+	res.status(201).json({
+		SafetyScore: safetyScore,
+		Traffic: traffic,
+	});
 };
 
 //createPlace: getCrimeForAddress + getTrafficForAddress => push under a long/lat
@@ -185,14 +121,28 @@ const createPlace = async (req, res, next) => {
 		return next(error);
 	}
 
-	res.status(201).json({ place: createdPlace });
+	// res.status(201).json({ place: createdPlace });
 };
 
-//getPlacesByUserId
-const getPlacesByUserId = async (req, res, next) => {
-	const userId = req.params.uid;
-
+//getPlaceByAddress
+async function getPlaceByAddress(address) {
 	// let places;
+	let place;
+	try {
+		place = await Place.findById(address);
+	} catch (err) {
+		const error = new HttpError(
+			'Fetching places failed, please try again later.',
+			500
+		);
+		return next(error);
+	}
+
+	return place;
+}
+
+//getPlacesByUserId
+async function getPlacesByUserId(userId) {
 	let userWithPlaces;
 	try {
 		userWithPlaces = await User.findById(userId).populate('places');
@@ -215,11 +165,120 @@ const getPlacesByUserId = async (req, res, next) => {
 			place.toObject({ getters: true })
 		),
 	});
-};
+}
 
-exports.createCrime = createCrime;
-exports.getCrimeByAddress = getCrimeByAddress;
+//createSafety (push data into database)
+async function createSafety(safetyScores) {
+	const createdCrimes = [];
+
+	for (const safetyScore of safetyScores) {
+		const createdSafety = new Crime({
+			name: safetyScore.name,
+			subType: safetyScore.subType,
+			location: {
+				lat: safetyScore.geoCode.latitude,
+				lng: safetyScore.geoCode.longitude,
+			},
+			safetyScore: safetyScore.safetyScore,
+		});
+
+		try {
+			const sess = await mongoose.startSession();
+			sess.startTransaction();
+			await createdSafety.save({ session: sess });
+			await sess.commitTransaction();
+			createdCrimes.push(createdSafety);
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	return createdCrimes;
+}
+
+//createTraffic
+async function createTraffic({ trafficInfos }) {
+	const createdTraffic = [];
+
+	for (const trafficInfo of trafficInfos.resourceSets[0].resources) {
+		const traffic = new Traffic({
+			description: trafficInfo.description,
+			detour: trafficInfo.detour,
+			location: {
+				lat: trafficInfo.point.coordinates[1],
+				lng: trafficInfo.point.coordinates[0],
+			},
+			roadClosed: trafficInfo.roadClosed,
+			type: trafficInfo.type,
+		});
+
+		try {
+			const sess = await mongoose.startSession();
+			sess.startTransaction();
+			if (traffic.roadClosed === true) {
+				await traffic.save({ session: sess });
+				await sess.commitTransaction();
+				createdTraffic.push(traffic);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	return createdTraffic;
+}
+
+//getSafetyByLocation(retrieve data from database and sends back response)
+async function getSafetyByLocation(coordinates) {
+	let safety;
+	try {
+		safety = await Crime.find({
+			location: {
+				$near: {
+					$geometry: {
+						type: 'Point',
+						coordinates: coordinates,
+					},
+					$maxDistance: 1000, // in meters
+				},
+			},
+		});
+	} catch (err) {
+		return next(err);
+	}
+
+	return safety;
+}
+//getTrafficbyaddress
+async function getTrafficByLocation(coordinates) {
+	let traffic;
+	try {
+		traffic = await Traffic.find({
+			location: {
+				$near: {
+					$geometry: {
+						type: 'Point',
+						coordinates: coordinates,
+					},
+					$maxDistance: 1000, // in meters - TODO: make consistent with bounding box
+				},
+			},
+		});
+	} catch (err) {
+		return next(err);
+	}
+
+	// if (!traffic) {
+	// 	const error = new Error('Could not find traffic for given address');
+	// 	return next(error);
+	// }
+
+	return traffic;
+}
+
+exports.createSafety = createSafety;
+exports.getSafetyByLocation = getSafetyByLocation;
 exports.createPlace = createPlace;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createTraffic = createTraffic;
-exports.getTrafficByAddress = getTrafficByAddress;
+exports.getTrafficByLocation = getTrafficByLocation;
