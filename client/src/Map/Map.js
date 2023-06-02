@@ -15,7 +15,10 @@ const onLoad = marker => {
 }
 
 function MapContainer() {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState({
+    lat: 41.8440047,
+    lng: -71.4347475
+  });
   return (
     <LoadScript
       googleMapsApiKey={API_KEY}

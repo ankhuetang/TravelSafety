@@ -43,7 +43,6 @@ const SearchBar = ({ setSelected }) => {
                     { status === "OK" && data.map(({place_id, description}) => (<ComboboxOption className="combobox-option" key={place_id} value={description}/>))}
                 </ComboboxList>
             </ComboboxPopover>
-        
         </Combobox>
     )
 }
