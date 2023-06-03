@@ -1,24 +1,15 @@
 //call traffic APIs for data
 const axios = require('axios');
-const getCoordsForAddress = require('./location');
 const getBoundsFromLatLng = require('./bounding');
 require('dotenv').config({ path: '../../.env' });
 
 const API_KEY = process.env.TRAFFIC_API_KEY;
-// const address = 'Barcelona';
+// const location = { lat: 41.3873974, lng: 2.168568 };
 
-async function getTrafficInfo(address) {
-	let location;
-	try {
-		location = await getCoordsForAddress(address);
-	} catch (error) {
-		console.error(error);
-		return;
-	}
-
+async function getTrafficInfo(location) {
 	let boundingBox;
 	try {
-		boundingBox = getBoundsFromLatLng(location.lat, location.lng, 2);
+		boundingBox = getBoundsFromLatLng(location.lat, location.lng, 1);
 	} catch (error) {
 		console.log('Cant calculate boundingBox');
 	}
@@ -35,9 +26,9 @@ async function getTrafficInfo(address) {
 	return data;
 }
 
-// getTrafficInfo(address)
+// getTrafficInfo(location)
 // 	.then((result) => {
-// 		console.log(result);
+// 		console.log(result.resourceSets[0].resources[0]);
 // 	})
 // 	.catch((error) => {
 // 		console.log(error);

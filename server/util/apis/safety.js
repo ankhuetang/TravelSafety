@@ -27,7 +27,7 @@ async function getSafetyScore(location) {
 
 	const data = response.data;
 	if (!data || response.statusCode !== 200) {
-		console.error(err);
+		throw new Error('No data available');
 	}
 
 	return data;

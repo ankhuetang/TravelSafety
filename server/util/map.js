@@ -75,9 +75,8 @@ async function createSafety(safetyScores) {
 }
 
 //createTraffic
-async function createTraffic({ trafficInfos }) {
+async function createTraffic(trafficInfos) {
 	const createdTraffic = [];
-
 	for (const trafficInfo of trafficInfos.resourceSets[0].resources) {
 		const traffic = new Traffic({
 			description: trafficInfo.description,
@@ -134,13 +133,15 @@ async function getSafetyByLocation(coordinates) {
 //getTrafficbyaddress
 async function getTrafficByLocation(coordinates) {
 	let traffic;
+	// Create a geospatial index on the location field
+	await Traffic.collection.createIndex({ location: '2dsphere' });
 	try {
 		traffic = await Traffic.find({
 			location: {
-				$near: {
+				$nearSphere: {
 					$geometry: {
 						type: 'Point',
-						coordinates: coordinates,
+						coordinates: [coordinates.lng, coordinates.lat],
 					},
 					$maxDistance: 1000, // in meters - TODO: make consistent with bounding box
 				},
