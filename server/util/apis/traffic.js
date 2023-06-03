@@ -2,10 +2,10 @@
 const axios = require('axios');
 const getCoordsForAddress = require('./location');
 const getBoundsFromLatLng = require('./bounding');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: '../../.env' });
 
 const API_KEY = process.env.TRAFFIC_API_KEY;
-const address = 'Barcelona';
+// const address = 'Barcelona';
 
 async function getTrafficInfo(address) {
 	let location;
@@ -35,12 +35,12 @@ async function getTrafficInfo(address) {
 	return data;
 }
 
-getTrafficInfo(address)
-	.then((result) => {
-		console.log(result);
-	})
-	.catch((error) => {
-		console.log(error);
-	});
+// getTrafficInfo(address)
+// 	.then((result) => {
+// 		console.log(result);
+// 	})
+// 	.catch((error) => {
+// 		console.log(error);
+// 	});
 
 module.exports = getTrafficInfo;

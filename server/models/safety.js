@@ -5,16 +5,20 @@ const Schema = mongoose.Schema;
 
 //consider adding index for querying
 
-const crimeSchema = new Schema({
+const safetySchema = new Schema({
 	name: { type: String, required: true },
 	subType: { type: String, required: true },
 	location: {
-		lat: { type: Number, required: true },
-		lng: { type: Number, required: true },
+		type: { type: String, default: 'Point' },
+		coordinates: {
+			type: [Number],
+			required: true,
+			index: '2dsphere',
+		},
 	},
 	safetyScore: {
 		overall: { type: Number, required: true },
-		lbtq: { type: Number, required: true },
+		lgbtq: { type: Number, required: true },
 		medical: { type: Number, required: true },
 		physicalHarm: { type: Number, required: true },
 		politicalFreedom: { type: Number, required: true },
@@ -26,6 +30,4 @@ const crimeSchema = new Schema({
 
 // Expire lau hon (crime data lau outdated)
 
-userSchema.plugin(uniqueValidator);
-
-module.exports = mongoose.model('Crime', crimeSchema);
+module.exports = mongoose.model('Safety', safetySchema);

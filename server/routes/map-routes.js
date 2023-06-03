@@ -4,4 +4,6 @@ const mapController = require('../controllers/map-controllers');
 
 const router = express.Router();
 
-router.post('/data', mapController.getPlaceByAddress);
+router.post('/data', mapController.getSearchByAddress);
+
+module.exports = router;

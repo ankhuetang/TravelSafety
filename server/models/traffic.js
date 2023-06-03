@@ -16,6 +16,4 @@ const trafficSchema = new Schema({
 
 // Expire ~2h (short)
 
-userSchema.plugin(uniqueValidator);
-
 module.exports = mongoose.model('Traffic', trafficSchema);
