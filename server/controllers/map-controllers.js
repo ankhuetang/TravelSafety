@@ -33,23 +33,25 @@ const getSearchByAddress = async (req, res, next) => {
 	}
 
 	// 2. Get Traffic documents using GeoSearch
-	// let traffic;
-	// try {
-	// 	traffic = await mapUtil.getTrafficByLocation(coordinates);
-	// } catch (error) {
-	// 	return next(error);
-	// }
+	let traffic;
+	try {
+		traffic = await mapUtil.getTrafficByLocation(coordinates);
+	} catch (error) {
+		return next(error);
+	}
 
-	// // 3a. Check if no doc return, then make req to api
+	// 3a. Check if no doc return, then make req to api
 	//neu traffic la array thi fai check if traffic.length ===0 nha
-	// if (!traffic) {
-	// 	const newTrafficInfo = getTrafficInfo(address);
+	if (!traffic || traffic.length === 0) {
+		console.log(coordinates);
+		let newTrafficInfo = await getTrafficInfo(coordinates);
 
-	// 	// 3b. Save traffic (mongo)
-	// 	traffic = mapUtil.createTraffic(newTrafficInfo);
-	// }
+		console.log(newTrafficInfo);
+		// 3b. Save traffic (mongo)
+		traffic = await mapUtil.createTraffic(newTrafficInfo);
+	}
 
-	// console.log(traffic);
+	console.log(traffic);
 
 	// 4.Get SafetyByLocation in DB
 	let safetyScore;
@@ -63,7 +65,7 @@ const getSearchByAddress = async (req, res, next) => {
 	// 5a. Check if no doc return, then make req to api
 	if (safetyScore.length === 0) {
 		let newSafetyScore = await getSafetyScore(coordinates);
-		console.log(newSafetyScore);
+		// console.log(newSafetyScore);
 
 		// 5b. Save safetyScore (mongo)
 		safetyScore = await mapUtil.createSafety(newSafetyScore);
@@ -73,7 +75,7 @@ const getSearchByAddress = async (req, res, next) => {
 	res.status(201).json({
 		Place: place,
 		SafetyScore: safetyScore,
-		// Traffic: traffic,
+		Traffic: traffic,
 	});
 };
 

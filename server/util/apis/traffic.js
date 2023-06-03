@@ -26,9 +26,9 @@ async function getTrafficInfo(location) {
 	return data;
 }
 
-// getTrafficInfo(address)
+// getTrafficInfo(location)
 // 	.then((result) => {
-// 		console.log(result);
+// 		console.log(result.resourceSets[0].resources[0]);
 // 	})
 // 	.catch((error) => {
 // 		console.log(error);
