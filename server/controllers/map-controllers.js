@@ -1,160 +1,79 @@
-//get crime data, get traffice data from database
-const fs = require('fs');
-const { validationResult } = require('express-validator');
-const mongoose = require('mongoose');
+const getSafetyScore = require('../util/apis/safety');
+const getCoordsForAddress = require('../util/apis/location');
+const getTrafficInfo = require('../util/apis/traffic');
 
-const getSafetyScore = require('../util/crime')
-const getCoordsForAddress = require('../util/location')
+const mapUtil = require('../util/map');
 
-const Crime = require('../models/crime')
-const Traffic = require('../models/traffic')
-const Place = require('../models/place')
-const User = require('../models/user');
+// Only req, res, next, other util
+const getSearchByAddress = async (req, res, next) => {
+	// 1a. Get lat, lon from address
+	const { address } = req.body;
 
-//createCrime (push data into database)
-const createCrime = async (req, res, next) => {
-    const {address} = req.body;
+	let coordinates;
+	try {
+		coordinates = await getCoordsForAddress(address);
+	} catch (error) {
+		console.error(error);
+		return;
+	}
+	// 1b. Check if place exist:
+	let place;
+	try {
+		place = await mapUtil.getPlaceByAddress(address);
+	} catch (error) {
+		return next(error);
+	}
+	// 1c. Save place
+	if (!place || place.length === 0) {
+		try {
+			place = await mapUtil.createPlace(address, coordinates);
+		} catch (error) {
+			return next(error);
+		}
+	}
 
-    let safetyScores;
-    try{
-        safetyScores = await getSafetyScore(address);
-    } catch(err){
-        return next(err);
-    }
+	// 2. Get Traffic documents using GeoSearch
+	let traffic;
+	try {
+		traffic = await mapUtil.getTrafficByLocation(coordinates);
+	} catch (error) {
+		return next(error);
+	}
 
-    safetyScores.map( async safetyScore => {
-        const createdCrime = new Crime({
-            name: safetyScore.name,
-            subType: safetyScore.subType,
-            location: {
-                lat: safetyScore.geoCode.latitude,
-                lng: safetyScore.geoCode.longitude
-            },
-            safetyScore: safetyScore.safetyScore
-        })
+	// 3a. Check if no doc return, then make req to api
+	//neu traffic la array thi fai check if traffic.length ===0 nha
+	if (!traffic || traffic.length === 0) {
+		let newTrafficInfo = await getTrafficInfo(coordinates);
 
-        try {
-            const sess = await mongoose.startSession();
-            sess.startTransaction();
-            await createdCrime.save({session: sess});
-            await sess.commitTransaction();
-        } catch(err) {
-            return next(err);
-        }
+		// 3b. Save traffic (mongo)
+		traffic = await mapUtil.createTraffic(newTrafficInfo);
+	}
 
-        res.status(201).json({crime: createdCrime});
-    })
-}
+	// 4.Get SafetyByLocation in DB
+	let safetyScore;
+	try {
+		safetyScore = await mapUtil.getSafetyByLocation(coordinates);
+		// console.log('safety is ', safetyScore);
+	} catch (err) {
+		return next(err);
+	}
 
-//createTraffic
+	// 5a. Check if no doc return, then make req to api
+	if (safetyScore.length === 0) {
+		let newSafetyScore = await getSafetyScore(coordinates);
 
-//getCrimebyaddress (retrieve data from database and sends back response)
-const getCrimeByAddress = async (req, res, next) => {
-    const {address} = req.body;
+		// 5b. Save safetyScore (mongo)
+		safetyScore = await mapUtil.createSafety(newSafetyScore);
+	}
 
-    let crime;
-    try {
-        crime = await Crime.find({address: address});
-    } catch (err) {
-        return next(err);
-    }
-
-    if (!crime) {
-        const error = new Error("Could not find crime for given address")
-        return next(error)
-    }
-
-    res.json({crime: crime.toObject({getters: true})});
-}
-
-//getTrafficbyaddress
-
-//createPlace
-const createPlace = async (req, res, next) => {
-    const {address, userId} = req.body;
-
-    let coordinates;
-    try {
-        coordinates = await getCoordsForAddress(address);
-    } catch (error) {
-        return next(error);
-    }
-
-    const createdPlace = new Place({
-        address: address,
-        location: coordinates,
-        creator: userId
-    })
-
-    let user;
-    try {
-    user = await User.findById(userId);
-    } catch (err) {
-        const error = new HttpError(
-            'Creating place failed, please try again.',
-            500
-    );
-        return next(error);
-    }
-
-    if (!user) {
-        const error = new HttpError('Could not find user for provided id.', 404);
-        return next(error);
-    }
-
-
-    try {
-        const sess = await mongoose.startSession();
-        sess.startTransaction();
-        await createdPlace.save({ session: sess });
-        user.places.push(createdPlace);
-        await user.save({ session: sess });
-        await sess.commitTransaction();
-        } catch (err) {
-        const error = new HttpError(
-            'Creating place failed, please try again.',
-            500
-        );
-        return next(error);
-    }
-
-    res.status(201).json({ place: createdPlace });
-}
-
-
-//getPlacesByUserId
-const getPlacesByUserId = async (req, res, next) => {
-    const userId = req.params.uid;
-  
-    // let places;
-    let userWithPlaces;
-    try {
-      userWithPlaces = await User.findById(userId).populate('places');
-    } catch (err) {
-      const error = new HttpError(
-        'Fetching places failed, please try again later.',
-        500
-      );
-      return next(error);
-    }
-  
-    if (!userWithPlaces || userWithPlaces.places.length === 0) {
-      return next(
-        new HttpError('Could not find places for the provided user id.', 404)
-      );
-    }
-  
-    res.json({
-      places: userWithPlaces.places.map(place =>
-        place.toObject({ getters: true })
-      )
-    });
+	// 6. Respond Object (2 key: safetyScore, traffic)
+	res.status(201).json({
+		Place: place,
+		SafetyScore: safetyScore,
+		Traffic: traffic,
+	});
 };
 
+// const res = await getSearchByAddress();
 
-exports.createCrime = createCrime;
-exports.getCrimeByAddress = getCrimeByAddress;
-exports.createPlace = createPlace;
-exports.getPlacesByUserId = getPlacesByUserId;
-
-
+exports.getSearchByAddress = getSearchByAddress;
