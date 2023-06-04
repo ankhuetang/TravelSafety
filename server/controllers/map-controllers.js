@@ -24,9 +24,9 @@ const getSearchByAddress = async (req, res, next) => {
 		return next(error);
 	}
 	// 1c. Save place
-	if (!place) {
+	if (!place || place.length === 0) {
 		try {
-			newPlace = await mapUtil.createPlace(address, coordinates);
+			place = await mapUtil.createPlace(address, coordinates);
 		} catch (error) {
 			return next(error);
 		}
@@ -43,21 +43,17 @@ const getSearchByAddress = async (req, res, next) => {
 	// 3a. Check if no doc return, then make req to api
 	//neu traffic la array thi fai check if traffic.length ===0 nha
 	if (!traffic || traffic.length === 0) {
-		console.log(coordinates);
 		let newTrafficInfo = await getTrafficInfo(coordinates);
 
-		console.log(newTrafficInfo);
 		// 3b. Save traffic (mongo)
 		traffic = await mapUtil.createTraffic(newTrafficInfo);
 	}
-
-	console.log(traffic);
 
 	// 4.Get SafetyByLocation in DB
 	let safetyScore;
 	try {
 		safetyScore = await mapUtil.getSafetyByLocation(coordinates);
-		console.log('safety is ', safetyScore);
+		// console.log('safety is ', safetyScore);
 	} catch (err) {
 		return next(err);
 	}
@@ -65,7 +61,6 @@ const getSearchByAddress = async (req, res, next) => {
 	// 5a. Check if no doc return, then make req to api
 	if (safetyScore.length === 0) {
 		let newSafetyScore = await getSafetyScore(coordinates);
-		// console.log(newSafetyScore);
 
 		// 5b. Save safetyScore (mongo)
 		safetyScore = await mapUtil.createSafety(newSafetyScore);
