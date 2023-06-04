@@ -8,8 +8,11 @@ const User = require('../models/user');
 //createPlace
 async function createPlace(address, coordinates) {
 	const createdPlace = new Place({
-		address,
-		location: coordinates,
+		address: address,
+		location: {
+			lat: coordinates.lat,
+			lng: coordinates.lng,
+		},
 	});
 
 	try {
