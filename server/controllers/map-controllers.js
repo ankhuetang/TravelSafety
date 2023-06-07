@@ -24,38 +24,36 @@ const getSearchByAddress = async (req, res, next) => {
 		return next(error);
 	}
 	// 1c. Save place
-	if (!place) {
+	if (!place || place.length === 0) {
 		try {
-			newPlace = await mapUtil.createPlace(address, coordinates);
+			place = await mapUtil.createPlace(address, coordinates);
 		} catch (error) {
 			return next(error);
 		}
 	}
 
 	// 2. Get Traffic documents using GeoSearch
-	// let traffic;
-	// try {
-	// 	traffic = await mapUtil.getTrafficByLocation(coordinates);
-	// } catch (error) {
-	// 	return next(error);
-	// }
+	let traffic;
+	try {
+		traffic = await mapUtil.getTrafficByLocation(coordinates);
+	} catch (error) {
+		return next(error);
+	}
 
-	// // 3a. Check if no doc return, then make req to api
+	// 3a. Check if no doc return, then make req to api
 	//neu traffic la array thi fai check if traffic.length ===0 nha
-	// if (!traffic) {
-	// 	const newTrafficInfo = getTrafficInfo(address);
+	if (!traffic || traffic.length === 0) {
+		let newTrafficInfo = await getTrafficInfo(coordinates);
 
-	// 	// 3b. Save traffic (mongo)
-	// 	traffic = mapUtil.createTraffic(newTrafficInfo);
-	// }
-
-	// console.log(traffic);
+		// 3b. Save traffic (mongo)
+		traffic = await mapUtil.createTraffic(newTrafficInfo);
+	}
 
 	// 4.Get SafetyByLocation in DB
 	let safetyScore;
 	try {
 		safetyScore = await mapUtil.getSafetyByLocation(coordinates);
-		console.log('safety is ', safetyScore);
+		// console.log('safety is ', safetyScore);
 	} catch (err) {
 		return next(err);
 	}
@@ -63,7 +61,6 @@ const getSearchByAddress = async (req, res, next) => {
 	// 5a. Check if no doc return, then make req to api
 	if (safetyScore.length === 0) {
 		let newSafetyScore = await getSafetyScore(coordinates);
-		console.log(newSafetyScore);
 
 		// 5b. Save safetyScore (mongo)
 		safetyScore = await mapUtil.createSafety(newSafetyScore);
@@ -73,7 +70,7 @@ const getSearchByAddress = async (req, res, next) => {
 	res.status(201).json({
 		Place: place,
 		SafetyScore: safetyScore,
-		// Traffic: traffic,
+		Traffic: traffic,
 	});
 };
 
