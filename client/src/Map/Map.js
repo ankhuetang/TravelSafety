@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import SearchBar from './SearchBar.js';
 import './Map.css';
-// const API_KEY = "AIzaSyDI4HgUw9Aw8eMrXx5jcAXvimyJLB4CS9g"
-const API_KEY = 'AIzaSyC3GQBK15JVQpuGyUwN4TvPFZQBrEF-6m0';
+
+const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 const center = {
 	lat: 33.56,

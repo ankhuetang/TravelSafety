@@ -1,21 +1,49 @@
 import React, { useState } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import './Alert.css';
-import SearchBar from '../../../Map/SearchBar';
+// import ComboboxSearch from '../../ComboboxSearch';
+// import { useState, useMemo } from 'react';
+// import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import usePlacesAutocomplete from 'use-places-autocomplete';
+import {
+	Combobox,
+	ComboboxInput,
+	ComboboxPopover,
+	ComboboxList,
+	ComboboxOption,
+} from '@reach/combobox';
+import '@reach/combobox/styles.css';
+import { useLoadScript } from '@react-google-maps/api';
 
-const Alert = ({ onSubmit }) => {
-	const [location, setLocation] = useState(null);
-	const [startDate, setStartDate] = useState('');
-	const [endDate, setEndDate] = useState('');
+const Alert = () => {
+	// const [location, setLocation] = useState(null);
 	const [duration, setDuration] = useState(''); // in days
 	const [radius, setRadius] = useState(''); // in miles
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		onSubmit({ location, startDate, endDate });
 	};
 
-	const formIsValid = location !== null && duration !== '' && radius !== '';
+	const autocompleteObject = usePlacesAutocomplete();
+	const {
+		ready,
+		value,
+		setValue,
+		suggestions: { status, data },
+		clearSuggestions,
+	} = autocompleteObject;
+
+	const formIsValid = value !== null && duration !== '' && radius !== '';
+
+	const { isLoaded } = useLoadScript({
+		googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Maybe unecessary
+		libraries: ['places'],
+	});
+
+	const handleSelect = async (address) => {
+		setValue(address, false);
+		clearSuggestions();
+	};
 
 	return (
 		<div>
@@ -33,28 +61,30 @@ const Alert = ({ onSubmit }) => {
 								Location
 								<span className='red-asterisk'>*</span>
 							</Form.Label>
-							<Form.Control
+							{/* <Form.Control
 								type='text'
 								value={location}
 								onChange={(event) => setLocation(event.target.value)}
-							/>
+							/> */}
+							{/* <ComboboxSearch /> */}
+							<Combobox onSelect={handleSelect}>
+								<ComboboxInput
+									value={value}
+									onChange={(event) => setValue(event.target.value)}
+									disabled={!ready}
+									className='combobox-input'
+									placeholder='Enter location'
+								/>
+								<ComboboxPopover>
+									<ComboboxList>
+										{status === 'OK' &&
+											data.map(({ place_id, description }) => (
+												<ComboboxOption key={place_id} value={description} />
+											))}
+									</ComboboxList>
+								</ComboboxPopover>
+							</Combobox>
 						</Form.Group>
-						{/* <Form.Group controlId='startDate'>
-							<Form.Label>Start Date:</Form.Label>
-							<Form.Control
-								type='date'
-								value={startDate}
-								onChange={(event) => setStartDate(event.target.value)}
-							/>
-						</Form.Group>
-						<Form.Group controlId='endDate'>
-							<Form.Label>End Date:</Form.Label>
-							<Form.Control
-								type='date'
-								value={endDate}
-								onChange={(event) => setEndDate(event.target.value)}
-							/>
-						</Form.Group> */}
 						<Form.Group controlId='duration'>
 							<Form.Label>
 								Duration (in days)

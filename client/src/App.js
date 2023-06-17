@@ -8,11 +8,6 @@ import Alert from './shared/components/pages/Alert';
 import Login from './shared/components/pages/Login';
 
 function App() {
-	// const handleSubmit = () => {
-	//   // Perform API request with searchParams and handle the data
-	//   console.log(searchParams); // Example: Log the searchParams to the console
-	// };
-
 	return (
 		<div className='App'>
 			<Router>
