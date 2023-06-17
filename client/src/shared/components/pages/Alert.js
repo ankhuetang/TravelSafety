@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import './Alert.css';
 import { Autocomplete, LoadScript } from '@react-google-maps/api';
+import axios from 'axios';
 
 const Alert = () => {
 	const [duration, setDuration] = useState(''); // in days
@@ -9,12 +10,22 @@ const Alert = () => {
 	const [autocomplete, setAutocomplete] = useState(null);
 	const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
-		console.log('handleSubmit called');
-		console.log('location: ', autocomplete);
-		console.log('radius: ', radius, ' kilometers');
-		console.log('duration: ', duration, ' days');
+		// console.log('handleSubmit called');
+		// console.log('location: ', autocomplete);
+		// console.log('radius: ', radius, ' kilometers');
+		// console.log('duration: ', duration, ' days');
+		try {
+			const res = await axios.post('http://localhost:5000/map/subscribe', {
+				address: { autocomplete },
+				radius: { radius },
+				duration: { duration },
+			});
+			console.log(res);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	const onLoad = (autocomplete) => {
