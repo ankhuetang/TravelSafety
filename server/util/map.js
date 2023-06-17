@@ -163,14 +163,11 @@ async function createCrime(crimeList) {
 
 	for (const crime of crimeList) {
 		const createdCrime = new Crime({
-			type: createdCrime.type,
-			address: createdCrime.address,
-			date: createdCrime.date,
+			type: crime.type,
+			address: crime.address,
+			date: crime.date,
 			location: {
-				coordinates: [
-					createdCrime.geoCode.longtitude,
-					createdCrime.geoCode.latitude,
-				],
+				coordinates: [crime.location.longtitude, crime.location.latitude],
 			},
 		});
 
