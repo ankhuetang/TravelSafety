@@ -15,3 +15,5 @@ const crimeSchema = new Schema({
 		},
 	},
 });
+
+module.exports = mongoose.model('Crime', crimeSchema);
