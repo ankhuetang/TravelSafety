@@ -1,6 +1,6 @@
 // Your AccountSID and Auth Token from console.twilio.com
-const accountSid = 'AC6e7f89ab6c87239870deac459b2c6add';
-const authToken = '4409976cbf0e32a4fa41e63f20cb698a';
+const accountSid = '';
+const authToken = '';
 
 const client = require('twilio')(accountSid, authToken);
 const mapUtil = require('./map');
