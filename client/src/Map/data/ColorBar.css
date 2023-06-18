@@ -1,0 +1,10 @@
+.color-bar {
+    display: flex;
+    height: 20px; 
+    width: 300px;
+}
+  
+.color-segment {
+    flex: 1;
+}
+  
