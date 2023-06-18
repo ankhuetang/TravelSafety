@@ -1,0 +1,13 @@
+.navbar-translucent {
+	background-color: rgba(212, 205, 205, 0.5);
+	height: 43px;
+}
+
+.travel-safety {
+	font-size: 25px;
+	padding-bottom: 8px;
+}
+
+.home-link {
+	font-size: 18px;
+}
