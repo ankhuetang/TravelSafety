@@ -1,11 +1,11 @@
 const subUtil = require('../util/subscription');
 
 const getSubscription = async (req, res, next) => {
-	const { address } = req.body;
+	const { userId } = req.body;
 
 	let subscription;
 	try {
-		subscription = await subUtil.getSubscriptionByAddress(address);
+		subscription = await subUtil.getSubscriptionById(userId);
 	} catch (error) {
 		console.error(error);
 	}
