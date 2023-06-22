@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const mapRoutes = require('./routes/map-routes');
-const subRoutes = require('./routes/subscription-routes');
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,7 +20,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/map', mapRoutes);
-app.use('/api/map', subRoutes);
 
 const mongoURI = process.env.MONGO_URI;
 
