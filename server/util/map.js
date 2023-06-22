@@ -86,8 +86,10 @@ async function createTraffic(trafficInfos) {
 			description: trafficInfo.description,
 			detour: trafficInfo.detour,
 			location: {
-				lat: trafficInfo.point.coordinates[1],
-				lng: trafficInfo.point.coordinates[0],
+				coordinates: [
+					trafficInfo.point.coordinates[1],
+					trafficInfo.point.coordinates[0],
+				],
 			},
 			roadClosed: trafficInfo.roadClosed,
 			type: trafficInfo.type,

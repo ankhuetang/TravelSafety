@@ -67,23 +67,23 @@ const getSearchByAddress = async (req, res, next) => {
 	}
 
 	//6. Get CrimeByLocation in DB
-	let crime;
-	try {
-		crime = await mapUtil.getCrimeByLocation(coordinates);
-	} catch (err) {
-		return next(err);
-	}
+	// let crime;
+	// try {
+	// 	crime = await mapUtil.getCrimeByLocation(coordinates);
+	// } catch (err) {
+	// 	return next(err);
+	// }
 
-	if (crime.length === 0) {
-		console.log('No crime data available');
-	}
+	// if (crime.length === 0) {
+	// 	console.log('No crime data available');
+	// }
 
 	// 7. Respond Object (2 key: safetyScore, traffic)
 	res.status(201).json({
 		Place: place,
 		SafetyScore: safetyScore,
 		Traffic: traffic,
-		Crime: crime,
+		// Crime: crime,
 	});
 };
 
