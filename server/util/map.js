@@ -4,6 +4,7 @@ const Safety = require('../models/safety');
 const Traffic = require('../models/traffic');
 const Place = require('../models/place');
 const User = require('../models/user');
+const Crime = require('../models/crime');
 
 //createPlace
 async function createPlace(address, coordinates) {
@@ -157,6 +158,54 @@ async function getTrafficByLocation(coordinates) {
 	return traffic;
 }
 
+async function createCrime(crimeList) {
+	const createdCrimes = [];
+
+	for (const crime of crimeList) {
+		const createdCrime = new Crime({
+			type: crime.type,
+			address: crime.address,
+			date: crime.date,
+			location: {
+				coordinates: [crime.location.longtitude, crime.location.latitude],
+			},
+		});
+
+		try {
+			const sess = await mongoose.startSession();
+			sess.startTransaction();
+			await createdCrime.save({ session: sess });
+			await sess.commitTransaction();
+			createdCrimes.push(createdCrime);
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	return createdCrimes;
+}
+
+async function getCrimeByLocation(coordinates) {
+	let crime;
+	await Crime.collection.createIndex({ location: '2dsphere' });
+	try {
+		crime = await Crime.find({
+			location: {
+				$nearSphere: {
+					$geometry: {
+						type: 'Point',
+						coordinates: [coordinates.lng, coordinates.lat],
+					},
+					$maxDistance: 1000, // in meters - TODO: make consistent with bounding box
+				},
+			},
+		});
+	} catch (err) {
+		console.error(err);
+	}
+	return crime; //return list of crimes
+}
+
 //getPlacesByUserId
 async function getPlacesByUserId(userId) {
 	let userWithPlaces;
@@ -185,5 +234,8 @@ exports.getSafetyByLocation = getSafetyByLocation;
 
 exports.createTraffic = createTraffic;
 exports.getTrafficByLocation = getTrafficByLocation;
+
+exports.createCrime = createCrime;
+exports.getCrimeByLocation = getCrimeByLocation;
 
 exports.getPlacesByUserId = getPlacesByUserId;
