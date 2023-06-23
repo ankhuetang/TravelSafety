@@ -27,7 +27,8 @@ const safetySchema = new Schema({
 	},
 	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a crime document belongs to only 1 place
 });
-
+// Create a geospatial index on the location field
+safetySchema.index({ location: '2dsphere' });
 // Expire lau hon (crime data lau outdated)
 
 module.exports = mongoose.model('Safety', safetySchema);

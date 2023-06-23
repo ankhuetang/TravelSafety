@@ -18,6 +18,7 @@ const trafficSchema = new Schema({
 	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a traffic document belongs to only 1 place
 });
 
+// Create a geospatial index on the location field
+trafficSchema.index({ location: '2dsphere' });
 // Expire ~2h (short)
-
 module.exports = mongoose.model('Traffic', trafficSchema);

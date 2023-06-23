@@ -15,5 +15,6 @@ const crimeSchema = new Schema({
 		},
 	},
 });
+crimeSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('Crime', crimeSchema);

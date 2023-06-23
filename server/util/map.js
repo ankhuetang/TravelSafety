@@ -115,9 +115,6 @@ async function createTraffic(trafficInfos) {
 async function getSafetyByLocation(coordinates) {
 	let safety;
 	try {
-		// Create a geospatial index on the location field
-		await Safety.collection.createIndex({ location: '2dsphere' });
-
 		safety = await Safety.find({
 			location: {
 				$nearSphere: {
@@ -139,8 +136,6 @@ async function getSafetyByLocation(coordinates) {
 //getTrafficbyaddress
 async function getTrafficByLocation(coordinates) {
 	let traffic;
-	// Create a geospatial index on the location field
-	await Traffic.collection.createIndex({ location: '2dsphere' });
 	try {
 		traffic = await Traffic.find({
 			location: {
@@ -189,7 +184,6 @@ async function createCrime(crimeList) {
 
 async function getCrimeByLocation(coordinates) {
 	let crime;
-	await Crime.collection.createIndex({ location: '2dsphere' });
 	try {
 		crime = await Crime.find({
 			location: {

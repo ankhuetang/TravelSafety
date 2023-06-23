@@ -80,9 +80,9 @@ const getSearchByAddress = async (req, res, next) => {
 
 	// 7. Respond Object (2 key: safetyScore, traffic)
 	res.status(201).json({
-		Place: place,
-		SafetyScore: safetyScore,
-		Traffic: traffic,
+		place: place,
+		safetyScore: safetyScore,
+		traffic: traffic,
 		// Crime: crime,
 	});
 };
