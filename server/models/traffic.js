@@ -6,14 +6,19 @@ const trafficSchema = new Schema({
 	description: { type: String, required: true },
 	detour: { type: String },
 	location: {
-		lat: { type: Number, required: true },
-		lng: { type: Number, required: true },
+		type: { type: String, default: 'Point' },
+		coordinates: {
+			type: [Number],
+			required: true,
+			index: '2dsphere',
+		},
 	},
 	roadClosed: { type: Boolean, required: true },
 	type: { type: Number, required: true },
 	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a traffic document belongs to only 1 place
 });
 
+// Create a geospatial index on the location field
+trafficSchema.index({ location: '2dsphere' });
 // Expire ~2h (short)
-
 module.exports = mongoose.model('Traffic', trafficSchema);

@@ -24,6 +24,7 @@
     "mongoose": "^7.2.0",
     "mongoose-unique-validator": "^4.0.0",
     "node-schedule": "^2.1.1",
-    "puppeteer": "^20.5.0"
+    "puppeteer": "^20.5.0",
+    "twilio": "^4.12.0"
   }
 }

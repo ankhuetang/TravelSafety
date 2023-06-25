@@ -4,6 +4,7 @@ const Safety = require('../models/safety');
 const Traffic = require('../models/traffic');
 const Place = require('../models/place');
 const User = require('../models/user');
+const Crime = require('../models/crime');
 
 //createPlace
 async function createPlace(address, coordinates) {
@@ -85,8 +86,10 @@ async function createTraffic(trafficInfos) {
 			description: trafficInfo.description,
 			detour: trafficInfo.detour,
 			location: {
-				lat: trafficInfo.point.coordinates[1],
-				lng: trafficInfo.point.coordinates[0],
+				coordinates: [
+					trafficInfo.point.coordinates[1],
+					trafficInfo.point.coordinates[0],
+				],
 			},
 			roadClosed: trafficInfo.roadClosed,
 			type: trafficInfo.type,
@@ -112,9 +115,6 @@ async function createTraffic(trafficInfos) {
 async function getSafetyByLocation(coordinates) {
 	let safety;
 	try {
-		// Create a geospatial index on the location field
-		await Safety.collection.createIndex({ location: '2dsphere' });
-
 		safety = await Safety.find({
 			location: {
 				$nearSphere: {
@@ -136,8 +136,6 @@ async function getSafetyByLocation(coordinates) {
 //getTrafficbyaddress
 async function getTrafficByLocation(coordinates) {
 	let traffic;
-	// Create a geospatial index on the location field
-	await Traffic.collection.createIndex({ location: '2dsphere' });
 	try {
 		traffic = await Traffic.find({
 			location: {
@@ -155,6 +153,53 @@ async function getTrafficByLocation(coordinates) {
 	}
 
 	return traffic;
+}
+
+async function createCrime(crimeList) {
+	const createdCrimes = [];
+
+	for (const crime of crimeList) {
+		const createdCrime = new Crime({
+			type: crime.type,
+			address: crime.address,
+			date: crime.date,
+			location: {
+				coordinates: [crime.location.longtitude, crime.location.latitude],
+			},
+		});
+
+		try {
+			const sess = await mongoose.startSession();
+			sess.startTransaction();
+			await createdCrime.save({ session: sess });
+			await sess.commitTransaction();
+			createdCrimes.push(createdCrime);
+		} catch (err) {
+			console.error(err);
+		}
+	}
+
+	return createdCrimes;
+}
+
+async function getCrimeByLocation(coordinates) {
+	let crime;
+	try {
+		crime = await Crime.find({
+			location: {
+				$nearSphere: {
+					$geometry: {
+						type: 'Point',
+						coordinates: [coordinates.lng, coordinates.lat],
+					},
+					$maxDistance: 1000, // in meters - TODO: make consistent with bounding box
+				},
+			},
+		});
+	} catch (err) {
+		console.error(err);
+	}
+	return crime; //return list of crimes
 }
 
 //getPlacesByUserId
@@ -185,5 +230,8 @@ exports.getSafetyByLocation = getSafetyByLocation;
 
 exports.createTraffic = createTraffic;
 exports.getTrafficByLocation = getTrafficByLocation;
+
+exports.createCrime = createCrime;
+exports.getCrimeByLocation = getCrimeByLocation;
 
 exports.getPlacesByUserId = getPlacesByUserId;

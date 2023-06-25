@@ -4,7 +4,7 @@ const getBoundsFromLatLng = require('./bounding');
 require('dotenv').config({ path: '../../.env' });
 
 const API_KEY = process.env.TRAFFIC_API_KEY;
-// const location = { lat: 41.3873974, lng: 2.168568 };
+// const location = { lat: 37.7590624, lng: -122.4140595 };
 
 async function getTrafficInfo(location) {
 	let boundingBox;

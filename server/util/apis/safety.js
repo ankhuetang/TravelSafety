@@ -7,11 +7,11 @@ const API_KEY = process.env.SAFETY_API_KEY;
 const API_SECRET = process.env.SAFETY_API_SECRET;
 
 // const location = {
-//     latitude: 40.767663,
-//     longitude: -73.971416,
-// }
+// 	lat: 37.7590624,
+// 	lng: -122.4140595,
+// };
 
-// const address = 'Barcelona';
+// const address = 'Mission District, San Francisco';
 
 async function getSafetyScore(location) {
 	var amadeus = new Amadeus({
@@ -22,7 +22,7 @@ async function getSafetyScore(location) {
 	const response = await amadeus.safety.safetyRatedLocations.get({
 		latitude: location.lat,
 		longitude: location.lng,
-		radius: 1,
+		radius: 2,
 	});
 
 	const data = response.data;
@@ -33,7 +33,7 @@ async function getSafetyScore(location) {
 	return data;
 }
 
-// getSafetyScore(address)
+// getSafetyScore(location)
 // 	.then((result) => {
 // 		console.log(result);
 // 	})

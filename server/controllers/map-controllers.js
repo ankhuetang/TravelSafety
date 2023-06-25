@@ -66,11 +66,24 @@ const getSearchByAddress = async (req, res, next) => {
 		safetyScore = await mapUtil.createSafety(newSafetyScore);
 	}
 
-	// 6. Respond Object (2 key: safetyScore, traffic)
+	//6. Get CrimeByLocation in DB
+	// let crime;
+	// try {
+	// 	crime = await mapUtil.getCrimeByLocation(coordinates);
+	// } catch (err) {
+	// 	return next(err);
+	// }
+
+	// if (crime.length === 0) {
+	// 	console.log('No crime data available');
+	// }
+
+	// 7. Respond Object (2 key: safetyScore, traffic)
 	res.status(201).json({
-		Place: place,
-		SafetyScore: safetyScore,
-		Traffic: traffic,
+		place: place,
+		safetyScore: safetyScore,
+		traffic: traffic,
+		// Crime: crime,
 	});
 };
 

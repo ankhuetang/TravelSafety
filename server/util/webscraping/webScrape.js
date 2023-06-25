@@ -24,6 +24,7 @@ async function webScrape(url, cssClass) {
 	const data = await page.evaluate(extractData, query); // Pass extractData function and query variable as arguments
 
 	await browser.close();
+
 	return data;
 }
 
