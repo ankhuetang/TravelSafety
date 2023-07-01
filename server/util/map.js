@@ -43,8 +43,17 @@ async function getPlaceByAddress(address) {
 //createSafety (push data into database)
 async function createSafety(safetyScores) {
 	const createdSafeties = [];
+	const uniqueSafety = safetyScores.filter(
+		(obj, index, self) =>
+			index ===
+			self.findIndex(
+				(o) =>
+					o.point.coordinates[0] === obj.point.coordinates[0] &&
+					o.point.coordinates[1] === obj.point.coordinates[1]
+			)
+	);
 
-	for (const safetyScore of safetyScores) {
+	for (const safetyScore of uniqueSafety) {
 		const createdSafety = new Safety({
 			name: safetyScore.name,
 			subType: safetyScore.subType,
@@ -82,7 +91,17 @@ async function createSafety(safetyScores) {
 //createTraffic
 async function createTraffic(trafficInfos) {
 	const createdTraffic = [];
-	for (const trafficInfo of trafficInfos.resourceSets[0].resources) {
+	const uniqueTraffic = trafficInfos.resourceSets[0].resources.filter(
+		(obj, index, self) =>
+			index ===
+			self.findIndex(
+				(o) =>
+					o.point.coordinates[0] === obj.point.coordinates[0] &&
+					o.point.coordinates[1] === obj.point.coordinates[1]
+			)
+	);
+	for (const trafficInfo of uniqueTraffic) {
+		// console.log(trafficInfo.description);
 		const traffic = new Traffic({
 			description: trafficInfo.description,
 			detour: trafficInfo.detour,

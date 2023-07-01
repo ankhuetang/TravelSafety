@@ -13,7 +13,7 @@ const API_SECRET = process.env.SAFETY_API_SECRET;
 
 // const address = 'Mission District, San Francisco';
 
-async function getSafetyScore(location) {
+async function getSafetyScore(location, radius) {
 	var amadeus = new Amadeus({
 		clientId: API_KEY,
 		clientSecret: API_SECRET,
@@ -22,12 +22,12 @@ async function getSafetyScore(location) {
 	const response = await amadeus.safety.safetyRatedLocations.get({
 		latitude: location.lat,
 		longitude: location.lng,
-		radius: 2,
+		radius: radius,
 	});
 
 	const data = response.data;
 	if (!data || response.statusCode !== 200) {
-		throw new Error('No data available');
+		console.log('No safety data available');
 	}
 
 	return data;

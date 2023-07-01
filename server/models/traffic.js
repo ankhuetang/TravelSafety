@@ -11,6 +11,7 @@ const trafficSchema = new Schema({
 			type: [Number],
 			required: true,
 			index: '2dsphere',
+			unique: true,
 		},
 	},
 	roadClosed: { type: Boolean, required: true },
