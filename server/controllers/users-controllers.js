@@ -21,7 +21,7 @@ const signup = async (req, res, next) => {
 	try {
 		existingUser = await User.findOne({ email: email });
 	} catch (err) {
-		const error = new HttpError('Error verifying user.', 500);
+		const error = new HttpError('Cannot access DB.', 500);
 		return next(error);
 	}
 
