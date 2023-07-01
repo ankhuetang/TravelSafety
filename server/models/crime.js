@@ -14,6 +14,7 @@ const crimeSchema = new Schema({
 			index: '2dsphere',
 		},
 	},
+	expiredAt: { type: Date, index: { expires: '24h' } },
 });
 crimeSchema.index({ location: '2dsphere' });
 
