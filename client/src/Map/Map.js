@@ -16,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import InfoWindowContent from "./InfoWindowContent.js";
 import ColorBar from "./data/ColorBar.js";
+import axios from "axios";
 
 const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const MAP_ID = process.env.REACT_APP_GOOGLE_MAPS_ID;
@@ -29,7 +30,8 @@ const center = {
 function MapContainer() {
   const [libraries] = useState(["places"]);
   const [map, setMap] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [requestData, setRequestData] = useState(null);
+  const [responseData, setResponseData] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
 
@@ -37,9 +39,19 @@ function MapContainer() {
     setMap(map);
   });
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.post('/api/map/data', requestData);
+      setResponseData(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   useEffect(() => {
-    if (location) {
-      console.log(location)
+    if (requestData) {
+      console.log(requestData)
+      fetchData()
       const level = Math.floor(Math.random() * 100) + 1;
       let icon;
       if (level < 40) {
@@ -50,7 +62,7 @@ function MapContainer() {
         icon = faBuildingCircleCheck.icon[4];
       }
       const newMarker = {
-        position: location,
+        position: requestData.coordinates[0],
         icon: {
           path: icon,
           fillColor: colors.normalColors[level],
@@ -71,14 +83,24 @@ function MapContainer() {
       };
       console.log("The safety level of this place is ", level);
       setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
+      map.panTo(requestData.coordinates[0])
     }
-  }, [location]);
+  }, [requestData]);
 
   const handleDrag = () => {
     const center = map.getCenter();
     const bounds = map.getBounds();
     console.log("Center:", center);
     console.log("Bounds:", bounds);
+    const addressData = {
+      address: "think of this later",
+      coordinates: [{
+        lat: center.lat(),
+        lng: center.lng(),
+      }],
+      radius: 5,
+    };
+    setRequestData(addressData)
   };
 
   return (
@@ -86,8 +108,7 @@ function MapContainer() {
       <ColorBar />
       <div className="map-container">
         <div className="search-bar-container">
-          <SearchBar setLocation={setLocation} />
-          {console.log(location)}
+          <SearchBar setRequestData={setRequestData} />
         </div>
         <div className="map">
           <GoogleMap

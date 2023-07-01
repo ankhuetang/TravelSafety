@@ -1,41 +1,26 @@
 import "./SearchBar.css";
 import { StandaloneSearchBox } from "@react-google-maps/api";
 import React, { useRef } from "react";
-import axios from 'axios';
 
-const SearchBar = ({ setLocation }) => {
+
+const SearchBar = ({ setRequestData }) => {
   const searchInput = useRef();
-  const fetchData = async (request) => {
-    try {
-      const response = await axios.post('/api/map/data', request);
-      setLocation(response.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-  const handleLocation = () => {
+  const handlePlacesChanged = () => {
     const place = searchInput.current.getPlaces();
-    if (place) {
-      console.log("place: ", place[0]);
-      const address = place[0].formatted_address
-      const lat = place[0].geometry.location.lat();
-      const lng = place[0].geometry.location.lng();
-      console.log(lat, lng)
-      const request = {
-        address: address,
-        coordinates: {
-          lat: lat,
-          lng: lng
-        }, 
-        radius: 5
-      }
-      fetchData(request);
-    }
-  };
+    const addressData = {
+      address: place[0].formatted_address,
+      coordinates: [{
+        lat: place[0].geometry.location.lat(),
+        lng: place[0].geometry.location.lng(),
+      }],
+      radius: 5,
+    };
+    setRequestData(addressData);
+  }
   return (
     <StandaloneSearchBox
       onLoad={(ref) => (searchInput.current = ref)}
-      onPlacesChanged={handleLocation}
+      onPlacesChanged={handlePlacesChanged}
     >
       <input
         type="text"
