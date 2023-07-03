@@ -41,66 +41,79 @@ function MapContainer() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post('/api/map/data', requestData);
+      const response = await axios.post(
+        "http://localhost:8000/api/map/data",
+        requestData
+      );
+      console.log("setting response data");
       setResponseData(response.data);
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     if (requestData) {
-      console.log(requestData)
-      fetchData()
-      const level = Math.floor(Math.random() * 100) + 1;
-      let icon;
-      if (level < 40) {
-        icon = faBuildingCircleXmark.icon[4];
-      } else if (level < 60) {
-        icon = faBuildingCircleExclamation.icon[4];
-      } else {
-        icon = faBuildingCircleCheck.icon[4];
-      }
-      const newMarker = {
-        position: requestData.coordinates[0],
-        icon: {
-          path: icon,
-          fillColor: colors.normalColors[level],
-          fillOpacity: 1,
-          strokeWeight: 1.25,
-          strokeColor: "black",
-          scale: 0.05,
-        },
-        content: {
-          overall: 44,
-          lgbtq: 37,
-          medical: 69,
-          physicalHarm: 34,
-          politicalFreedom: 50,
-          theft: 42,
-          women: 33,
-        },
-      };
-      console.log("The safety level of this place is ", level);
-      setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
-      map.panTo(requestData.coordinates[0])
+      console.log(requestData);
+      fetchData();
+      console.log("fetching data");
     }
   }, [requestData]);
+
+  useEffect(() => {
+    // Safety scores
+    if (responseData) {
+      Object.entries(responseData.safetyScore).map((safetyData) => {
+        console.log("displaying a safety marker", safetyData);
+        let icon;
+        const level = safetyData[1].safetyScore.overall;
+        console.log("the overall safety is", level);
+        if (level < 40) {
+          icon = faBuildingCircleXmark.icon[4];
+        } else if (level < 60) {
+          icon = faBuildingCircleExclamation.icon[4];
+        } else {
+          icon = faBuildingCircleCheck.icon[4];
+        }
+        const newMarker = {
+          position: {
+            lat: safetyData[1].location.coordinates[1],
+            lng: safetyData[1].location.coordinates[0],
+          },
+          icon: {
+            path: icon,
+            fillColor: colors.normalColors[level],
+            fillOpacity: 1,
+            strokeWeight: 1.25,
+            strokeColor: "black",
+            scale: 0.05,
+          },
+          content: safetyData[1].safetyScore,
+          name: safetyData[1].name,
+        };
+        console.log("the new marker is done", newMarker);
+        setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
+      });
+      // Traffic, please do this later
+      setResponseData(null);
+      console.log("the markers", markers);
+      map.panTo(responseData.place[0].location);
+    }
+  }, [responseData]);
 
   const handleDrag = () => {
     const center = map.getCenter();
     const bounds = map.getBounds();
     console.log("Center:", center);
     console.log("Bounds:", bounds);
-    const addressData = {
-      address: "think of this later",
-      coordinates: [{
-        lat: center.lat(),
-        lng: center.lng(),
-      }],
-      radius: 5,
-    };
-    setRequestData(addressData)
+    // handle how many API calls
+    // setRequestData(addressData)
+  };
+
+  const handleAPICallsForViewport = (center, bounds) => {
+    // calculate API calls
+    // construct RequestData
+    // setRequestData
   };
 
   return (

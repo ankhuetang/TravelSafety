@@ -9,11 +9,11 @@ const SearchBar = ({ setRequestData }) => {
     const place = searchInput.current.getPlaces();
     const addressData = {
       address: place[0].formatted_address,
-      coordinates: [{
+      coordinates: {
         lat: place[0].geometry.location.lat(),
         lng: place[0].geometry.location.lng(),
-      }],
-      radius: 5,
+      },
+      radius: 1,
     };
     setRequestData(addressData);
   }
@@ -24,7 +24,7 @@ const SearchBar = ({ setRequestData }) => {
     >
       <input
         type="text"
-        placeholder="Search an adress"
+        placeholder="Search an address"
         className="combobox-input"
       />
     </StandaloneSearchBox>
