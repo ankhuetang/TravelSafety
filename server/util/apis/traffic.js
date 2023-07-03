@@ -6,10 +6,10 @@ require('dotenv').config({ path: '../../.env' });
 const API_KEY = process.env.TRAFFIC_API_KEY;
 // const location = { lat: 37.7590624, lng: -122.4140595 };
 
-async function getTrafficInfo(location) {
+async function getTrafficInfo(location, radius) {
 	let boundingBox;
 	try {
-		boundingBox = getBoundsFromLatLng(location.lat, location.lng, 1);
+		boundingBox = getBoundsFromLatLng(location.lat, location.lng, radius);
 	} catch (error) {
 		console.log('Cant calculate boundingBox');
 	}

@@ -43,7 +43,7 @@ const getSearchByAddress = async (req, res, next) => {
 	// 3a. Check if no doc return, then make req to api
 	//neu traffic la array thi fai check if traffic.length ===0 nha
 	if (!traffic || traffic.length === 0) {
-		let newTrafficInfo = await getTrafficInfo(coordinates);
+		let newTrafficInfo = await getTrafficInfo(coordinates, radius);
 
 		// 3b. Save traffic (mongo)
 		traffic = await mapUtil.createTraffic(newTrafficInfo);
@@ -60,7 +60,7 @@ const getSearchByAddress = async (req, res, next) => {
 
 	// 5a. Check if no doc return, then make req to api
 	if (safetyScore.length === 0) {
-		let newSafetyScore = await getSafetyScore(coordinates);
+		let newSafetyScore = await getSafetyScore(coordinates, radius);
 
 		// 5b. Save safetyScore (mongo)
 		safetyScore = await mapUtil.createSafety(newSafetyScore);

@@ -12,6 +12,7 @@ const crimeSchema = new Schema({
 			type: [Number],
 			required: true,
 			index: '2dsphere',
+			unique: true,
 		},
 	},
 	expiredAt: { type: Date, index: { expires: '24h' } },
