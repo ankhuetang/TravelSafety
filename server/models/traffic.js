@@ -15,6 +15,7 @@ const trafficSchema = new Schema({
 	},
 	roadClosed: { type: Boolean, required: true },
 	type: { type: Number, required: true },
+	expiredAt: { type: Date, index: { expires: '3h' } },
 	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a traffic document belongs to only 1 place
 });
 
