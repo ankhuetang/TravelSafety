@@ -14,13 +14,16 @@ import { makeMarkers, makeRequestData } from "./utils.js";
 
 const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const MAP_ID = process.env.REACT_APP_GOOGLE_MAPS_ID;
-
-// make it into user's location
-const center = {
+const US_BOUNDS = {
+  north: 49.3457868,
+  west: -124.7844079,
+  east: -66.9513812,
+  south: 24.7433195,
+};
+const temp_center = {
   lat: 33.56,
   lng: -117.72,
 };
-
 const options = {
   minZoom: 9,
   restriction: {
@@ -34,7 +37,6 @@ const options = {
   },
   mapId: MAP_ID,
 };
-
 const libraries = ["places", "core", "geometry", "geocoding"];
 
 function MapContainer() {
@@ -47,8 +49,17 @@ function MapContainer() {
 
   const onLoad = useCallback((map) => {
     setMap(map);
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      console.log("navigator working", latitude, longitude);
+      if (
+        US_BOUNDS.north >= latitude >= US_BOUNDS.south &&
+        US_BOUNDS.west <= longitude <= US_BOUNDS.east
+      )
+        map.setCenter({ lat: latitude, lng: longitude });
+      else alert("Your current location is not in the US");
+    });
   });
-
   useEffect(() => {
     console.log("trigger useEffect", requestData);
     const fetchData = async (data) => {
@@ -98,7 +109,7 @@ function MapContainer() {
         <div className="map">
           <GoogleMap
             mapContainerClassName="map-inner"
-            center={center}
+            center={temp_center}
             zoom={10}
             options={options}
             onLoad={onLoad}
