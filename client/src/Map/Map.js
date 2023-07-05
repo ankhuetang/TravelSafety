@@ -10,7 +10,7 @@ import "./Map.css";
 import InfoWindowContent from "./InfoWindowContent.js";
 import ColorBar from "./data/ColorBar.js";
 import axios from "axios";
-import { makeMarkers } from "./utils.js";
+import { makeMarkers, makeRequestData } from "./utils.js";
 
 const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const MAP_ID = process.env.REACT_APP_GOOGLE_MAPS_ID;
@@ -21,26 +21,49 @@ const center = {
   lng: -117.72,
 };
 
+const options = {
+  minZoom: 9,
+  restriction: {
+    latLngBounds: {
+      north: 49.3457868,
+      west: -124.7844079,
+      east: -66.9513812,
+      south: 24.7433195,
+    },
+    strictBounds: true,
+  },
+  mapId: MAP_ID,
+};
+
+const libraries = ["places", "core", "geometry", "geocoding"];
+
 function MapContainer() {
   const [map, setMap] = useState(null);
-  const [requestData, setRequestData] = useState(null);
+  const [requestData, setRequestData] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [panned, setPanned] = useState(false);
+  const [viewport, setViewport] = useState(null);
 
   const onLoad = useCallback((map) => {
     setMap(map);
   });
 
   useEffect(() => {
-    const fetchSafetyData = async () => {
+    console.log("trigger useEffect", requestData);
+    const fetchData = async (data) => {
       try {
+        // delete this later
+        map.fitBounds(viewport);
+        console.log(data);
         const response = await axios.post(
           "http://localhost:8000/api/map/data",
-          requestData
+          data
         );
         if (response.data) {
-          const { markers, bounds } = await makeMarkers(response.data);
-          map.fitBounds(bounds);
+          const { markers } = await makeMarkers(response.data);
+          map.fitBounds(viewport);
+          setPanned(true);
           markers.forEach((marker) =>
             setMarkers((prevMarkers) => [...prevMarkers, marker])
           );
@@ -49,40 +72,41 @@ function MapContainer() {
         console.log(error.message);
       }
     };
-    fetchSafetyData();
+    requestData.map((data) => fetchData(data));
   }, [requestData]);
-  
-  const handleDrag = () => {
-    const center = map.getCenter();
-    const bounds = map.getBounds();
-    console.log("Center:", center);
-    console.log("Bounds:", bounds);
-    // handle how many API calls
-    // setRequestData(addressData)
-  };
 
-  const handleAPICallsForViewport = (center, bounds) => {
-    // calculate API calls
-    // construct RequestData
-    // setRequestData
+  const handleDragOrZoom = () => {
+    if (panned) {
+      setPanned(false);
+    } else if (map) {
+      const center = map.getCenter().toJSON();
+      const bounds = map.getBounds().toJSON();
+      const addressData = makeRequestData(center, bounds);
+      setRequestData(addressData);
+    }
   };
-
   return (
-    <LoadScript googleMapsApiKey={API_KEY} libraries={["places", "core"]}>
+    <LoadScript googleMapsApiKey={API_KEY} libraries={libraries}>
       <ColorBar />
       <div className="map-container">
         <div className="search-bar-container">
-          <SearchBar setRequestData={setRequestData} />
+          <SearchBar
+            setRequestData={setRequestData}
+            setViewport={setViewport}
+          />
         </div>
         <div className="map">
           <GoogleMap
             mapContainerClassName="map-inner"
             center={center}
             zoom={10}
-            options={{ mapId: MAP_ID }}
+            options={options}
             onLoad={onLoad}
-            onDragEnd={handleDrag}
+            onDragEnd={handleDragOrZoom}
+            onIdle={handleDragOrZoom}
           >
+            {requestData &&
+              requestData.map((data) => <Marker position={data.coordinates} />)}
             {markers &&
               markers.map((marker) => (
                 <Marker

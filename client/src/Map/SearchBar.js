@@ -1,21 +1,17 @@
 import "./SearchBar.css";
 import { StandaloneSearchBox } from "@react-google-maps/api";
 import React, { useRef } from "react";
-
-const SearchBar = ({ setRequestData }) => {
+import { makeRequestData } from "./utils.js";
+const SearchBar = ({ setRequestData, setViewport }) => {
   const searchInput = useRef();
   const handlePlacesChanged = () => {
     const place = searchInput.current.getPlaces();
-    const addressData = {
-      address: place[0].formatted_address,
-      coordinates: {
-        lat: place[0].geometry.location.lat(),
-        lng: place[0].geometry.location.lng(),
-      },
-      radius: 5,
-    };
+    const center = place[0].geometry.location.toJSON();
+    const bounds = place[0].geometry.viewport.toJSON();
+    const addressData = makeRequestData(center, bounds);
     setRequestData(addressData);
-  }
+    setViewport(place[0].geometry.viewport.toJSON());
+  };
   return (
     <StandaloneSearchBox
       onLoad={(ref) => (searchInput.current = ref)}
