@@ -1,5 +1,6 @@
+// CHANGE THIS!!!
 import React, { useContext } from "react";
-import AuthContext from "../../context/auth/AuthContext";
+import AuthContext from "../../../context/auth/AuthContext";
 import { Route, Navigate } from "react-router-dom";
 import Spinner from "../layout/Spinner";
 

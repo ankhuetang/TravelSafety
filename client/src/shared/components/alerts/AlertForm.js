@@ -1,10 +1,10 @@
 // TODO: Clear location input after submitting
+// NO NEED TO CHANGE
 
-import React, { useCallback, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import "./AlertForm.css";
 import { Autocomplete, LoadScript } from "@react-google-maps/api";
-import axios from "axios";
 import AlertContext from "../../../context/alert/AlertContext";
 
 const AlertForm = () => {

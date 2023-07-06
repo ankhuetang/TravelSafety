@@ -1,3 +1,4 @@
+// CHANGE THIS!!!
 import React, { useContext, Fragment, useEffect } from "react";
 import AlertContext from "../../../context/alert/AlertContext";
 import AlertItem from "./AlertItem";
@@ -5,17 +6,18 @@ import AlertItem from "./AlertItem";
 const Alerts = () => {
   const alertContext = useContext(AlertContext);
 
-  const { alerts, filtered, getAlerts, loading } = alertContext;
+  // const { alerts, filtered, getAlerts, loading } = alertContext;
+  const { alerts, filtered, loading } = alertContext;
 
-  useEffect(() => {
-    console.log("calling getAlerts");
-    setTimeout(() => {
-      getAlerts();
-    }, 200);
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   console.log("calling getAlerts");
+  //   setTimeout(() => {
+  //     getAlerts();
+  //   }, 200);
+  //   // eslint-disable-next-line
+  // }, []);
 
-  if (alerts !== null) {
+  if (alerts.length === 0) {
     return (
       <h4>
         It will feel safer if there are some alerts here. Please add an alert!
