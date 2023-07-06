@@ -1,61 +1,27 @@
+// NO NEED TO CHANGE
 import React, { useReducer } from "react";
+import { v4 as uuid } from "uuid";
 import alertReducer from "./AlertReducer";
 import alertContext from "./AlertContext";
-import {
-  GET_ALERTS,
-  ADD_ALERT,
-  FILTER_ALERTS,
-  CLEAR_ALERTS,
-  CLEAR_FILTER,
-  ALERT_ERROR,
-} from "../types";
+import { ADD_ALERT, FILTER_ALERTS, CLEAR_FILTER } from "../types";
 
 const AlertState = (props) => {
   const initialState = {
-    alerts: null,
+    alerts: [],
     filtered: null,
-    error: null,
   };
 
   const [state, dispatch] = useReducer(alertReducer, initialState);
 
-  // Get alerts
-  const getAlerts = async () => {
-    try {
-      const res = await axios.get("/api/contacts"); // Sua lai dung endpoint
-      dispatch({
-        type: GET_ALERTS,
-        payload: res.data,
-      });
-    } catch (error) {
-      dispatch({
-        type: ALERT_ERROR,
-        payload: error.response.msg,
-      });
-    }
-  };
-
+  // TODO
   // Add alert - later on will be making request to back end
-  const addAlert = async (alert) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    try {
-      const res = await axios.post("/api/alerts", alert, config);
-      dispatch({ type: ADD_ALERT, payload: res.data });
-    } catch (error) {
-      dispatch({ type: ALERT_ERROR, payload: error.response.msg });
-    }
+  // axios.post('api/map/subscription')
+  // post params: FormData, userID
+  const addAlert = (alert) => {
+    console.log("addAlert called");
+    alert.id = uuid();
+    dispatch({ type: ADD_ALERT, payload: alert });
   };
-
-  // Clear alerts
-  const clearAlerts = (id) => {
-    dispatch({ type: CLEAR_ALERTS });
-  };
-
   // Filter alerts
   const filterAlerts = (text) => {
     dispatch({ type: FILTER_ALERTS, payload: text });
@@ -70,12 +36,9 @@ const AlertState = (props) => {
       value={{
         alerts: state.alerts,
         filtered: state.filtered,
-        error: state.error,
         addAlert,
         filterAlerts,
         clearFilter,
-        getAlerts,
-        clearAlerts,
       }}
     >
       {props.children}
