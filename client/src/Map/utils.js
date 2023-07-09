@@ -1,47 +1,49 @@
 import colors from "./data/ColorRange.js";
-import {
-  faBuildingCircleXmark,
-  faBuildingCircleExclamation,
-  faBuildingCircleCheck,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-
+import { WhereToVote, FmdBad, WrongLocation } from "@mui/icons-material";
+import { renderToString } from "react-dom/server";
+import { faCarOn } from "@fortawesome/free-solid-svg-icons";
 export function makeMarkers(responseData) {
   const markers = [];
+  const viewport = new window.google.maps.LatLngBounds()
+  // Safety
   Object.entries(responseData.safetyScore).map((safetyData) => {
     let icon;
     const level = safetyData[1].safetyScore.overall;
     if (level < 40) {
-      icon = faBuildingCircleXmark.icon[4];
+      icon = <WhereToVote />;
     } else if (level < 60) {
-      icon = faBuildingCircleExclamation.icon[4];
+      icon = <FmdBad />;
     } else {
-      icon = faBuildingCircleCheck.icon[4];
+      icon = <WrongLocation />;
     }
     const position = {
       lat: safetyData[1].location.coordinates[1],
       lng: safetyData[1].location.coordinates[0],
     };
+    const iconString = renderToString(icon);
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(iconString, "image/svg+xml");
+    const iconPath = svgDoc.querySelector("path")?.getAttribute("d");
     const newMarker = {
       type: "safety",
       position: position,
       icon: {
-        path: icon,
+        path: iconPath,
         fillColor: colors.normalColors[level],
         fillOpacity: 1,
-        strokeWeight: 1.25,
-        strokeColor: "black",
-        scale: 0.05,
+        strokeWeight: 1.5,
+        strokeColor: colors.darkerColors[level],
+        scale: 1.5,
       },
       content: safetyData[1].safetyScore,
       name: safetyData[1].name,
     };
     markers.push(newMarker);
+    viewport.extend(position)
   });
   // Traffic
   Object.entries(responseData.traffic).map((trafficData) => {
-    const icon = faTriangleExclamation.icon[4];
-    const level = trafficData[1].type;
+    const weight = trafficData[1].type;
     const position = {
       lat: trafficData[1].location.coordinates[1],
       lng: trafficData[1].location.coordinates[0],
@@ -50,19 +52,20 @@ export function makeMarkers(responseData) {
       type: "traffic",
       position: position,
       icon: {
-        path: icon,
-        fillColor: "red",
+        path: faCarOn.icon[4],
+        fillColor: "#ffcc00",
         fillOpacity: 1,
         strokeWeight: 1.25,
         strokeColor: "black",
-        scale: 0.05,
+        scale: 0.075,
       },
       content: trafficData[1].description,
       name: "",
     };
     markers.push(newMarker);
+    viewport.extend(position)
   });
-  return { markers };
+  return { markers, viewport };
 }
 
 // radius =  { center, horizontal, vertical, diagonal }
@@ -138,11 +141,11 @@ export function makeRequestData(center, bounds) {
       }
     });
     const data = {
-     address: address,
-     coordinates: area.coordinates,
-     radius: area.radius,
-   };
-   requestData.push(data);
+      address: address,
+      coordinates: area.coordinates,
+      radius: area.radius,
+    };
+    requestData.push(data);
   });
   return requestData;
 }

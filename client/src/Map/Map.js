@@ -4,6 +4,7 @@ import {
   LoadScript,
   Marker,
   InfoWindow,
+  MarkerClusterer,
 } from "@react-google-maps/api";
 import SearchBar from "./SearchBar.js";
 import "./Map.css";
@@ -11,33 +12,9 @@ import InfoWindowContent from "./InfoWindowContent.js";
 import ColorBar from "./data/ColorBar.js";
 import axios from "axios";
 import { makeMarkers, makeRequestData } from "./utils.js";
+import MapConfigs from "./MapConfigs.js";
 
-const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-const MAP_ID = process.env.REACT_APP_GOOGLE_MAPS_ID;
-const US_BOUNDS = {
-  north: 49.3457868,
-  west: -124.7844079,
-  east: -66.9513812,
-  south: 24.7433195,
-};
-const temp_center = {
-  lat: 33.56,
-  lng: -117.72,
-};
-const options = {
-  minZoom: 9,
-  restriction: {
-    latLngBounds: {
-      north: 49.3457868,
-      west: -124.7844079,
-      east: -66.9513812,
-      south: 24.7433195,
-    },
-    strictBounds: true,
-  },
-  mapId: MAP_ID,
-};
-const libraries = ["places", "core", "geometry", "geocoding"];
+const { API_KEY, US_BOUNDS, temp_center, options, libraries } = MapConfigs();
 
 function MapContainer() {
   const [map, setMap] = useState(null);
@@ -51,7 +28,6 @@ function MapContainer() {
     setMap(map);
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
-      console.log("navigator working", latitude, longitude);
       if (
         US_BOUNDS.north >= latitude >= US_BOUNDS.south &&
         US_BOUNDS.west <= longitude <= US_BOUNDS.east
@@ -64,15 +40,12 @@ function MapContainer() {
     console.log("trigger useEffect", requestData);
     const fetchData = async (data) => {
       try {
-        // delete this later
-        map.fitBounds(viewport);
-        console.log(data);
         const response = await axios.post(
           "http://localhost:8000/api/map/data",
           data
         );
         if (response.data) {
-          const { markers } = await makeMarkers(response.data);
+          const { markers, viewport } = await makeMarkers(response.data);
           map.fitBounds(viewport);
           setPanned(true);
           markers.forEach((marker) =>
@@ -97,7 +70,7 @@ function MapContainer() {
     }
   };
   return (
-    <LoadScript googleMapsApiKey={API_KEY} libraries={libraries}>
+    <LoadScript googleMapsApiKey={API_KEY} libraries={libraries} version="beta">
       <ColorBar />
       <div className="map-container">
         <div className="search-bar-container">
@@ -116,14 +89,17 @@ function MapContainer() {
             onDragEnd={handleDragOrZoom}
             onIdle={handleDragOrZoom}
           >
-            {requestData &&
-              requestData.map((data) => <Marker position={data.coordinates} />)}
             {markers &&
               markers.map((marker) => (
                 <Marker
                   position={marker.position}
                   icon={marker.icon}
                   onClick={() => setSelectedMarker(marker)}
+                  options={{
+                    collisionBehavior:
+                      window.google.maps.CollisionBehavior
+                        .OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+                  }}
                 />
               ))}
             {selectedMarker && (
