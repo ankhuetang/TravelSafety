@@ -4,12 +4,12 @@ import {
   LoadScript,
   Marker,
   InfoWindow,
-  MarkerClusterer,
 } from "@react-google-maps/api";
 import SearchBar from "./SearchBar.js";
 import "./Map.css";
-import InfoWindowContent from "./InfoWindowContent.js";
-import ColorBar from "./data/ColorBar.js";
+import SafetyInfoWindow from "./InfoWindow/SafetyInfoWindow.js";
+import TrafficInfoWindow from "./InfoWindow/TrafficInfoWindow.js";
+import ColorBar from "./colors/ColorBar.js";
 import axios from "axios";
 import { makeMarkers, makeRequestData } from "./utils.js";
 import MapConfigs from "./MapConfigs.js";
@@ -45,6 +45,7 @@ function MapContainer() {
           data
         );
         if (response.data) {
+          console.log(response.data)
           const { markers, viewport } = await makeMarkers(response.data);
           map.fitBounds(viewport);
           setPanned(true);
@@ -104,7 +105,11 @@ function MapContainer() {
               ))}
             {selectedMarker && (
               <InfoWindow position={selectedMarker.position}>
-                <InfoWindowContent content={selectedMarker.content} />
+                {selectedMarker.type === "safety" ? (
+                  <SafetyInfoWindow card={selectedMarker} />
+                ) : (
+                  <TrafficInfoWindow card={selectedMarker} />
+                )}
               </InfoWindow>
             )}
           </GoogleMap>

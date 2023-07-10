@@ -1,29 +1,29 @@
-import colors from "./data/ColorRange.js";
+import colors from "./colors/ColorRange.js";
 import { WhereToVote, FmdBad, WrongLocation } from "@mui/icons-material";
 import { renderToString } from "react-dom/server";
 import { faCarOn } from "@fortawesome/free-solid-svg-icons";
+import { mdiMapMarkerRemoveVariant } from "@mdi/js";
 export function makeMarkers(responseData) {
   const markers = [];
-  const viewport = new window.google.maps.LatLngBounds()
+  const viewport = new window.google.maps.LatLngBounds();
   // Safety
   Object.entries(responseData.safetyScore).map((safetyData) => {
-    let icon;
+    let icon, iconPath;
     const level = safetyData[1].safetyScore.overall;
     if (level < 40) {
-      icon = <WhereToVote />;
-    } else if (level < 60) {
-      icon = <FmdBad />;
+      iconPath = mdiMapMarkerRemoveVariant;
     } else {
-      icon = <WrongLocation />;
+      if (level < 60) icon = <FmdBad />;
+      else icon = <WhereToVote />;
+      const iconString = renderToString(icon);
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(iconString, "image/svg+xml");
+      iconPath = svgDoc.querySelector("path")?.getAttribute("d");
     }
     const position = {
       lat: safetyData[1].location.coordinates[1],
       lng: safetyData[1].location.coordinates[0],
     };
-    const iconString = renderToString(icon);
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(iconString, "image/svg+xml");
-    const iconPath = svgDoc.querySelector("path")?.getAttribute("d");
     const newMarker = {
       type: "safety",
       position: position,
@@ -39,17 +39,16 @@ export function makeMarkers(responseData) {
       name: safetyData[1].name,
     };
     markers.push(newMarker);
-    viewport.extend(position)
+    viewport.extend(position);
   });
   // Traffic
   Object.entries(responseData.traffic).map((trafficData) => {
-    const weight = trafficData[1].type;
     const position = {
       lat: trafficData[1].location.coordinates[1],
       lng: trafficData[1].location.coordinates[0],
     };
     const newMarker = {
-      type: "traffic",
+      type: trafficData[1].type,
       position: position,
       icon: {
         path: faCarOn.icon[4],
@@ -60,11 +59,11 @@ export function makeMarkers(responseData) {
         scale: 0.075,
       },
       content: trafficData[1].description,
-      name: "",
     };
     markers.push(newMarker);
-    viewport.extend(position)
+    viewport.extend(position);
   });
+  console.log(markers);
   return { markers, viewport };
 }
 
