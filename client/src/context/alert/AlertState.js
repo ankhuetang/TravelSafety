@@ -1,14 +1,16 @@
 // NO NEED TO CHANGE
 import React, { useReducer } from "react";
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 import alertReducer from "./AlertReducer";
 import alertContext from "./AlertContext";
-import { ADD_ALERT, FILTER_ALERTS, CLEAR_FILTER } from "../types";
+import { ADD_ALERT, FILTER_ALERTS, CLEAR_FILTER, ALERT_ERROR } from "../types";
+import axios from "axios";
 
 const AlertState = (props) => {
   const initialState = {
     alerts: [],
     filtered: null,
+    error: null,
   };
 
   const [state, dispatch] = useReducer(alertReducer, initialState);
@@ -17,10 +19,22 @@ const AlertState = (props) => {
   // Add alert - later on will be making request to back end
   // axios.post('api/map/subscription')
   // post params: FormData, userID
-  const addAlert = (alert) => {
+  const addAlert = async (alert) => {
     console.log("addAlert called");
-    alert.id = uuid();
-    dispatch({ type: ADD_ALERT, payload: alert });
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const res = await axios.post("/subscription", alert, config);
+      console.log("res is: ", res);
+      dispatch({ type: ADD_ALERT, payload: res.data });
+    } catch (error) {
+      console.log("There is an error!");
+      console.log(error);
+      dispatch({ type: ALERT_ERROR, payload: error.response.msg });
+    }
   };
   // Filter alerts
   const filterAlerts = (text) => {
