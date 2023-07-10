@@ -33,7 +33,7 @@ const AuthState = (props) => {
       setAuthToken(localStorage.getItem("token"));
     }
     try {
-      const res = await axios.get("api/auth"); // Sua lai cho dung endpoint
+      const res = await axios.get("http://localhost:8000/api/user/data");
       dispatch({
         type: USER_LOADED,
         payload: res.data,
@@ -53,7 +53,11 @@ const AuthState = (props) => {
       },
     };
     try {
-      const res = await axios.post("api/users", formData, config);
+      const res = await axios.post(
+        "http://localhost:8000/api/user/signup",
+        formData,
+        config
+      );
       dispatch({ type: REGISTER_SUCCESS, payload: res.data });
       setTimeout(() => {
         loadUser();
@@ -71,7 +75,11 @@ const AuthState = (props) => {
       },
     };
     try {
-      const res = await axios.post("api/auth", formData, config);
+      const res = await axios.post(
+        "http://localhost:8000/api/user/login",
+        formData,
+        config
+      );
       dispatch({ type: LOGIN_SUCCESS, payload: res.data });
       setTimeout(() => {
         loadUser();
