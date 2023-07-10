@@ -11,7 +11,7 @@ const AlertForm = () => {
   const alertContext = useContext(AlertContext);
   const { addAlert } = alertContext;
   const [alert, setAlert] = useState({
-    autocompleteObject: null,
+    autocompleteObject: null, // This might be causing a problem
     location: "",
     duration: "",
     radius: "",

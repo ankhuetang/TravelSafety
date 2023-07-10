@@ -15,6 +15,9 @@ const getSubscription = async (req, res, next) => {
 	});
 };
 
+// axios POST
+// private
+// add them userID vao destructor
 const subscribe = async (req, res, next) => {
 	const { address, radius, duration } = req.body;
 
