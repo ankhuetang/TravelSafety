@@ -19,17 +19,19 @@ const Alerts = () => {
 
   if (alerts.length === 0) {
     return (
-      <h4>
-        It will feel safer if there are some alerts here. Please add an alert!
-      </h4>
+      <div style={{ marginRight: "100px" }}>
+        <h4>
+          It will feel safer if there are some alerts here. Please add an alert!
+        </h4>
+      </div>
     );
   }
 
   return (
     <Fragment>
       {filtered !== null
-        ? filtered.map((alert) => <AlertItem key={alert.id} alert={alert} />)
-        : alerts.map((alert) => <AlertItem key={alert.id} alert={alert} />)}
+        ? filtered.map((alert) => <AlertItem key={alert._id} alert={alert} />)
+        : alerts.map((alert) => <AlertItem key={alert._id} alert={alert} />)}
     </Fragment>
   );
 };
