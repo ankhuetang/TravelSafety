@@ -13,6 +13,7 @@ const MapConfigs = () => {
   };
   const options = {
     minZoom: 9,
+    maxZoom: 17,
     restriction: {
       latLngBounds: {
         north: 49.3457868,

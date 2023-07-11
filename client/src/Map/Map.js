@@ -46,8 +46,8 @@ function MapContainer() {
         );
         if (response.data) {
           console.log(response.data)
-          const { markers, viewport } = await makeMarkers(response.data);
-          map.fitBounds(viewport);
+          const { markers } = await makeMarkers(response.data);
+          if (viewport) map.fitBounds(viewport);
           setPanned(true);
           markers.forEach((marker) =>
             setMarkers((prevMarkers) => [...prevMarkers, marker])
@@ -72,7 +72,6 @@ function MapContainer() {
   };
   return (
     <LoadScript googleMapsApiKey={API_KEY} libraries={libraries} version="beta">
-      <ColorBar />
       <div className="map-container">
         <div className="search-bar-container">
           <SearchBar
