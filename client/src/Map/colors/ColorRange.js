@@ -17,9 +17,9 @@ const generateColorRange = (startColor, middleColor, endColor, count) => {
     normalColors[String(i + 1)] = hexColor;
 
     // Generate darker color by reducing RGB values
-    const darkerR = Math.max(Math.round(r - 30), 0);
-    const darkerG = Math.max(Math.round(g - 30), 0);
-    const darkerB = Math.max(Math.round(b - 30), 0);
+    const darkerR = Math.max(Math.round(r - 50), 0);
+    const darkerG = Math.max(Math.round(g - 50), 0);
+    const darkerB = Math.max(Math.round(b - 50), 0);
     const darkerHexColor = RGBToHex(darkerR, darkerG, darkerB);
     darkerColors[String(i + 1)] = darkerHexColor;
   }
@@ -33,9 +33,9 @@ const generateColorRange = (startColor, middleColor, endColor, count) => {
     normalColors[String(firstHalfCount + i + 1)] = hexColor;
 
     // Generate darker color by reducing RGB values
-    const darkerR = Math.max(Math.round(r - 30), 0);
-    const darkerG = Math.max(Math.round(g - 30), 0);
-    const darkerB = Math.max(Math.round(b - 30), 0);
+    const darkerR = Math.max(Math.round(r - 50), 0);
+    const darkerG = Math.max(Math.round(g - 50), 0);
+    const darkerB = Math.max(Math.round(b - 50), 0);
     const darkerHexColor = RGBToHex(darkerR, darkerG, darkerB);
     darkerColors[String(firstHalfCount + i + 1)] = darkerHexColor;
   }
@@ -44,11 +44,9 @@ const generateColorRange = (startColor, middleColor, endColor, count) => {
     normalColors,
     darkerColors,
   };
-
+  
   return colors;
 };
-
-
 
 const hexToRGB = (hexColor) => {
   const hex = hexColor.replace("#", "");
@@ -65,4 +63,4 @@ const RGBToHex = (r, g, b) => {
   return `#${rHex}${gHex}${bHex}`;
 };
 
-export default generateColorRange("#FF0000", "#FFFF00", "#008000", 100)
+export default generateColorRange("#FF0000", "#FFFF00", "#008000", 100);
