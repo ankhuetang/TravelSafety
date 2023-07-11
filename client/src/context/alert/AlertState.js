@@ -20,16 +20,26 @@ const AlertState = (props) => {
   // axios.post('api/map/subscription')
   // post params: FormData, userID
   const addAlert = async (alert) => {
-    console.log("addAlert called");
+    console.log("addAlert called with alert: ", alert);
     const config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
     try {
-      const res = await axios.post("/subscription", alert, config);
+      const res = await axios.post(
+        "http://localhost:8000/api/map/subscription",
+        alert,
+        config
+      );
       console.log("res is: ", res);
-      dispatch({ type: ADD_ALERT, payload: res.data });
+      const obj = {
+        _id: res.data.Subscription._id,
+        location: res.data.Subscription.address,
+        duration: res.data.Subscription.duration,
+        radius: res.data.Subscription.radius,
+      };
+      dispatch({ type: ADD_ALERT, payload: obj });
     } catch (error) {
       console.log("There is an error!");
       console.log(error);

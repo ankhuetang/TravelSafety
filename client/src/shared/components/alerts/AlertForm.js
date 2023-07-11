@@ -10,13 +10,14 @@ import AlertContext from "../../../context/alert/AlertContext";
 const AlertForm = () => {
   const alertContext = useContext(AlertContext);
   const { addAlert } = alertContext;
+  const [autocompleteObject, setAutocompleteObject] = useState(null);
   const [alert, setAlert] = useState({
-    autocompleteObject: null, // This might be causing a problem
+    // autocompleteObject: null, // This might be causing a problem
     location: "",
     duration: "",
     radius: "",
   });
-  const { autocompleteObject, location, duration, radius } = alert;
+  const { location, duration, radius } = alert;
   const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   const onSubmit = (e) => {
@@ -34,7 +35,8 @@ const AlertForm = () => {
   };
 
   const onLoad = (autocomplete) => {
-    setAlert({ ...alert, autocompleteObject: autocomplete });
+    // setAlert({ ...alert, autocompleteObject: autocomplete });
+    setAutocompleteObject(autocomplete);
     // console.log(alert);
   };
 

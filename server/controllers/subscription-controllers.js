@@ -19,7 +19,7 @@ const getSubscription = async (req, res, next) => {
 // private
 // add them userID vao destructor
 const subscribe = async (req, res, next) => {
-	const { address, radius, duration } = req.body;
+	const { location: address, radius, duration } = req.body;
 
 	let subscription;
 	try {

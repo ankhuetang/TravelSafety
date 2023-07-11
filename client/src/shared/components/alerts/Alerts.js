@@ -28,8 +28,8 @@ const Alerts = () => {
   return (
     <Fragment>
       {filtered !== null
-        ? filtered.map((alert) => <AlertItem key={alert.id} alert={alert} />)
-        : alerts.map((alert) => <AlertItem key={alert.id} alert={alert} />)}
+        ? filtered.map((alert) => <AlertItem key={alert._id} alert={alert} />)
+        : alerts.map((alert) => <AlertItem key={alert._id} alert={alert} />)}
     </Fragment>
   );
 };
