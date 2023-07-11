@@ -14,7 +14,7 @@ router.post(
 );
 
 //check for authentication for protected routes
-router.use(checkAuth);
+//router.use(checkAuth);
 
 router.post(
 	'/subscription',
