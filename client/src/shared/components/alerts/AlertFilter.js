@@ -24,7 +24,7 @@ const AlertFilter = () => {
   };
 
   return (
-    <form>
+    <form style={{ marginRight: "100px", marginTop: "20px" }}>
       <input
         ref={text}
         type="text"
