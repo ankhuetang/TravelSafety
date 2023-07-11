@@ -47,7 +47,7 @@ function MapContainer() {
         if (response.data) {
           console.log(response.data)
           const { markers, viewport } = await makeMarkers(response.data);
-          map.fitBounds(viewport);
+       //   map.fitBounds(viewport);
           setPanned(true);
           markers.forEach((marker) =>
             setMarkers((prevMarkers) => [...prevMarkers, marker])
@@ -78,6 +78,7 @@ function MapContainer() {
           <SearchBar
             setRequestData={setRequestData}
             setViewport={setViewport}
+            map={map}
           />
         </div>
         <div className="map">
