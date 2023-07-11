@@ -12,7 +12,10 @@ const NavBar = () => {
     <div>
       <Navbar className="navbar-translucent">
         <Container>
-          <Navbar.Brand className="travel-safety">TravelSafety</Navbar.Brand>
+          <Navbar.Brand className="travel-safety">
+            {" "}
+            <i class="fa-solid fa-suitcase"></i> TravelSafety
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">

@@ -19,9 +19,11 @@ const Alerts = () => {
 
   if (alerts.length === 0) {
     return (
-      <h4>
-        It will feel safer if there are some alerts here. Please add an alert!
-      </h4>
+      <div style={{ marginRight: "100px" }}>
+        <h4>
+          It will feel safer if there are some alerts here. Please add an alert!
+        </h4>
+      </div>
     );
   }
 
