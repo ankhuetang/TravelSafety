@@ -45,9 +45,10 @@ const getSearchByAddress = async (req, res, next) => {
 		//neu traffic la array thi fai check if traffic.length ===0 nha
 		if (!traffic || traffic.length === 0) {
 			let newTrafficInfo = await getTrafficInfo(coordinates, radius);
-
-			// 3b. Save traffic (mongo)
-			traffic = await mapUtil.createTraffic(newTrafficInfo);
+			if (traffic || traffic.length !== 0) {
+				// 3b. Save traffic (mongo)
+				traffic = await mapUtil.createTraffic(newTrafficInfo);
+			}
 		}
 
 		// 4.Get SafetyByLocation in DB
@@ -62,9 +63,10 @@ const getSearchByAddress = async (req, res, next) => {
 		// 5a. Check if no doc return, then make req to api
 		if (safetyScore.length === 0) {
 			let newSafetyScore = await getSafetyScore(coordinates, radius);
-
-			// 5b. Save safetyScore (mongo)
-			safetyScore = await mapUtil.createSafety(newSafetyScore);
+			if (safetyScore.length !== 0) {
+				// 5b. Save safetyScore (mongo)
+				safetyScore = await mapUtil.createSafety(newSafetyScore);
+			}
 		}
 
 		//6. Get CrimeByLocation in DB
