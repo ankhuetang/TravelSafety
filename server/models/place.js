@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 // User address => lat/long => save vao place => search crime trong DB => api
 
 const placeSchema = new Schema({
-	address: { type: String, required: true },
+	address: { type: String, required: false },
 	location: {
 		lat: { type: Number, required: true },
 		lng: { type: Number, required: true },
