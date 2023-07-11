@@ -9,9 +9,11 @@ const API_KEY = '2ArSNxWDZ9KjGr6GPmY9R7IQ5YTX32O7';
 const API_SECRET = 'FUZzhqW8tE568Lqq';
 
 // const location = {
-// 	lat: 37.7590624,
-// 	lng: -122.4140595,
+// 	lat: 34.0522,
+// 	lng: -118.2437,
 // };
+
+// const rad = 1;
 
 // const address = 'Mission District, San Francisco';
 
@@ -28,6 +30,7 @@ async function getSafetyScore(location, radius) {
 	});
 
 	const data = response.data;
+	console.log(data);
 	if (!data || response.statusCode !== 200) {
 		console.log('No safety data available');
 	}
@@ -35,7 +38,7 @@ async function getSafetyScore(location, radius) {
 	return data;
 }
 
-// getSafetyScore(location)
+// getSafetyScore(location, rad)
 // 	.then((result) => {
 // 		console.log(result);
 // 	})
