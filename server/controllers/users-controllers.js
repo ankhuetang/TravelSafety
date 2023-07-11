@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const HttpError = require('../middleware/check-auth');
+const HttpError = require('../models/http-error');
 
 const User = require('../models/user');
 
@@ -15,7 +15,7 @@ const signup = async (req, res, next) => {
 		);
 	}
 
-	const { name, email, password, phone } = req.body;
+	const { name, email, password } = req.body; //add phone
 
 	let existingUser;
 	try {
@@ -48,8 +48,9 @@ const signup = async (req, res, next) => {
 		name,
 		email,
 		password: hashedPassword,
-		phone,
+		// phone,
 	});
+	console.log(createdUser);
 
 	try {
 		await createdUser.save();
