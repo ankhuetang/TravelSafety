@@ -2,7 +2,8 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const usersController = require('../controllers/users-controllers');
-const checkAuth = require('../middleware/check-auth');
+const auth = require('../middleware/auth');
+const User = require('../models/user');
 
 const router = express.Router();
 
@@ -26,11 +27,14 @@ router.post(
 	usersController.login
 );
 
-router.use(checkAuth);
+//router.use(checkAuth);
+//user not defined error
 
-router.get('/data', async (req, res) => {
+router.get('/data', auth, async (req, res) => {
 	try {
-		const user = await User.findById(req.user.id).select('-password');
+		console.log('HELLUUUUU');
+		const user = await User.findById(req.user).select('-password');
+		console.log('USER IS ', user);
 		res.json(user);
 	} catch (err) {
 		console.error(err.message);

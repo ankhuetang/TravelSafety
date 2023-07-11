@@ -50,10 +50,11 @@ const signup = async (req, res, next) => {
 		password: hashedPassword,
 		// phone,
 	});
-	console.log(createdUser);
 
 	try {
-		await createdUser.save();
+		// console.log(createdUser);
+		const user = await createdUser.save();
+		console.log(user);
 	} catch (err) {
 		const error = new HttpError('Failed to save your data to DB', 500);
 		return next(error);
@@ -71,6 +72,7 @@ const signup = async (req, res, next) => {
 		return next(error);
 	}
 
+	console.log(token);
 	res
 		.status(201) //201 code means created
 		.json({ userId: createdUser.id, email: createdUser.email, token: token });
