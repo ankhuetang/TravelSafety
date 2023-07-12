@@ -14,9 +14,9 @@ import Warnings from "./shared/components/layout/Warnings";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./shared/components/routing/PrivateRoute";
 
-// if (localStorage.getItem("token") !== null) {
-//   setAuthToken(localStorage.getItem("token"));
-// }
+if (localStorage.getItem("token") !== null) {
+  setAuthToken(localStorage.getItem("token"));
+}
 
 const App = () => {
   return (
@@ -31,7 +31,11 @@ const App = () => {
                 <Warnings />
                 <Routes>
                   <Route exact path="/" element={<MapContainer />} />
-                  <Route exact path="/profile" element={<Profile />} />
+                  <Route
+                    exact
+                    path="/profile"
+                    element={<PrivateRoute component={Profile} />}
+                  />
                   <Route exact path="/register" element={<Register />} />
                   <Route exact path="/login" element={<Login />} />
                 </Routes>
