@@ -8,6 +8,7 @@ const Crime = require('../models/crime');
 
 //createPlace
 async function createPlace(address, coordinates) {
+	console.log(address);
 	const createdPlace = new Place({
 		address: address,
 		location: {
@@ -42,8 +43,17 @@ async function getPlaceByAddress(address) {
 //createSafety (push data into database)
 async function createSafety(safetyScores) {
 	const createdSafeties = [];
+	const uniqueSafety = safetyScores.filter(
+		(obj, index, self) =>
+			index ===
+			self.findIndex(
+				(o) =>
+					o.point.coordinates[0] === obj.point.coordinates[0] &&
+					o.point.coordinates[1] === obj.point.coordinates[1]
+			)
+	);
 
-	for (const safetyScore of safetyScores) {
+	for (const safetyScore of uniqueSafety) {
 		const createdSafety = new Safety({
 			name: safetyScore.name,
 			subType: safetyScore.subType,
@@ -81,7 +91,17 @@ async function createSafety(safetyScores) {
 //createTraffic
 async function createTraffic(trafficInfos) {
 	const createdTraffic = [];
-	for (const trafficInfo of trafficInfos.resourceSets[0].resources) {
+	const uniqueTraffic = trafficInfos.resourceSets[0].resources.filter(
+		(obj, index, self) =>
+			index ===
+			self.findIndex(
+				(o) =>
+					o.point.coordinates[0] === obj.point.coordinates[0] &&
+					o.point.coordinates[1] === obj.point.coordinates[1]
+			)
+	);
+	for (const trafficInfo of uniqueTraffic) {
+		// console.log(trafficInfo.description);
 		const traffic = new Traffic({
 			description: trafficInfo.description,
 			detour: trafficInfo.detour,
@@ -112,7 +132,7 @@ async function createTraffic(trafficInfos) {
 }
 
 //getSafetyByLocation(retrieve data from database and sends back response)
-async function getSafetyByLocation(coordinates) {
+async function getSafetyByLocation(coordinates, radius) {
 	let safety;
 	try {
 		safety = await Safety.find({
@@ -122,7 +142,7 @@ async function getSafetyByLocation(coordinates) {
 						type: 'Point',
 						coordinates: [coordinates.lng, coordinates.lat],
 					},
-					$maxDistance: 1000, // in meters
+					$maxDistance: radius * 1000, // in meters
 				},
 			},
 		});
@@ -134,7 +154,7 @@ async function getSafetyByLocation(coordinates) {
 }
 
 //getTrafficbyaddress
-async function getTrafficByLocation(coordinates) {
+async function getTrafficByLocation(coordinates, radius) {
 	let traffic;
 	try {
 		traffic = await Traffic.find({
@@ -144,7 +164,7 @@ async function getTrafficByLocation(coordinates) {
 						type: 'Point',
 						coordinates: [coordinates.lng, coordinates.lat],
 					},
-					$maxDistance: 1000, // in meters - TODO: make consistent with bounding box
+					$maxDistance: radius * 1000, // radius in km
 				},
 			},
 		});
@@ -182,7 +202,7 @@ async function createCrime(crimeList) {
 	return createdCrimes;
 }
 
-async function getCrimeByLocation(coordinates) {
+async function getCrimeByLocation(coordinates, radius) {
 	let crime;
 	try {
 		crime = await Crime.find({
@@ -192,7 +212,7 @@ async function getCrimeByLocation(coordinates) {
 						type: 'Point',
 						coordinates: [coordinates.lng, coordinates.lat],
 					},
-					$maxDistance: 1000, // in meters - TODO: make consistent with bounding box
+					$maxDistance: radius * 1000, // in meters - TODO: make consistent with bounding box
 				},
 			},
 		});

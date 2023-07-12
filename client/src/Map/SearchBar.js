@@ -1,32 +1,28 @@
-import "./SearchBar.css"
+import "./SearchBar.css";
 import { StandaloneSearchBox } from "@react-google-maps/api";
-import React, { useRef } from 'react'
-
-const SearchBar = ({ setLocation }) => {
-    const searchInput = useRef();
-    const handleLocation = () => {
-        const place = searchInput.current.getPlaces();
-        if (place) {
-            console.log("place: ", place[0])
-            const lat = place[0].geometry.location.lat()
-            const lng = place[0].geometry.location.lng()
-            setLocation({lat, lng})      
-        }
-    }
-    return (
-        <StandaloneSearchBox 
-            onLoad={ref => searchInput.current = ref}
-            onPlacesChanged={handleLocation}>
-                <input 
-                    type="text"
-                    placeholder="Search an adress"
-                    className="combobox-input"
-                />
-        </StandaloneSearchBox>
-    )
-}
+import React, { useRef } from "react";
+import { makeRequestData } from "./utils.js";
+const SearchBar = ({ setRequestData}) => {
+  const searchInput = useRef();
+  const handlePlacesChanged = () => {
+    const place = searchInput.current.getPlaces();
+    const center = place[0].geometry.location.toJSON();
+    const bounds = place[0].geometry.viewport.toJSON();
+    const addressData = makeRequestData(center, bounds);
+    setRequestData(addressData);
+  };
+  return (
+    <StandaloneSearchBox
+      onLoad={(ref) => (searchInput.current = ref)}
+      onPlacesChanged={handlePlacesChanged}
+    >
+      <input
+        type="text"
+        placeholder="Search an address"
+        className="combobox-input"
+      />
+    </StandaloneSearchBox>
+  );
+};
 
 export default SearchBar;
-
-
-

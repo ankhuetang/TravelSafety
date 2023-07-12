@@ -17,6 +17,7 @@ const placeSchema = new Schema({
 	// 	lng2: { type: Number, required: false },
 	// },
 	creator: { type: mongoose.Types.ObjectId, required: false, ref: 'User' },
+	expiredAt: { type: Date, index: { expires: '3h' } },
 });
 
 module.exports = mongoose.model('Place', placeSchema);

@@ -1,119 +1,122 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
-import SearchBar from './SearchBar.js'
-import "./Map.css"
-import colors from "./data/ColorRange.js"
+import React, { useState, useEffect, useCallback } from "react";
 import {
-  faBuildingCircleXmark,
-  faBuildingCircleExclamation,
-  faBuildingCircleCheck,
-  faTrafficCone
-} from '@fortawesome/free-solid-svg-icons'
-import InfoWindowContent from './InfoWindowContent.js'
+  GoogleMap,
+  LoadScript,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
+import SearchBar from "./SearchBar.js";
+import "./Map.css";
+import SafetyInfoWindow from "./InfoWindow/SafetyInfoWindow.js";
+import TrafficInfoWindow from "./InfoWindow/TrafficInfoWindow.js";
+import ColorBar from "./colors/ColorBar.js";
+import axios from "axios";
+import { makeMarkers, makeRequestData } from "./utils.js";
+import MapConfigs from "./MapConfigs.js";
 
-const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
-const MAP_ID = process.env.REACT_APP_GOOGLE_MAPS_ID
-
-// make it into user's location
-const center = {
-	lat: 33.56,
-	lng: -117.72,
-};
+const { API_KEY, US_BOUNDS, temp_center, options, libraries } = MapConfigs();
 
 function MapContainer() {
-  const [libraries] = useState(['places']);
   const [map, setMap] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [requestData, setRequestData] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [panned, setPanned] = useState(false);
+  const [viewport, setViewport] = useState(null);
 
   const onLoad = useCallback((map) => {
-    setMap(map)
+    setMap(map);
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      if (
+        US_BOUNDS.north >= latitude >= US_BOUNDS.south &&
+        US_BOUNDS.west <= longitude <= US_BOUNDS.east
+      )
+        map.setCenter({ lat: latitude, lng: longitude });
+      else alert("Your current location is not in the US");
+    });
   });
-
   useEffect(() => {
-    if (location) {
-      // safety score
-      const level = Math.floor(Math.random() * 100) + 1;
-      let icon;
-      if (level < 40) {
-        icon = faBuildingCircleXmark.icon[4]
-      }
-      else if (level < 60) {
-        icon = faBuildingCircleExclamation.icon[4]
-      }
-      else {
-        icon = faBuildingCircleCheck.icon[4]
-      }
-      const newMarker = {
-        position: location,
-        icon: {
-          path: icon,
-          fillColor: colors.normalColors[level],
-          fillOpacity: 1,
-          strokeWeight: 1.25,
-          strokeColor: "black",
-          scale: 0.05,
-        },
-        content: {
-          "overall": 44,
-          "lgbtq": 37,
-          "medical": 69,
-          "physicalHarm": 34,
-          "politicalFreedom": 50,
-          "theft": 42,
-          "women": 33
+    console.log("trigger useEffect", requestData);
+    const fetchData = async (data) => {
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/map/data",
+          data
+        );
+        if (response.data) {
+          console.log(response.data)
+          const { markers, viewport } = await makeMarkers(response.data);
+          map.fitBounds(viewport);
+          setPanned(true);
+          markers.forEach((marker) =>
+            setMarkers((prevMarkers) => [...prevMarkers, marker])
+          );
         }
+      } catch (error) {
+        console.log(error.message);
       }
-      console.log("The safety level of this place is ", level)
-      setMarkers((prevMarkers) => [...prevMarkers, newMarker])
-    }
-  }, [location])
+    };
+    requestData.map((data) => fetchData(data));
+  }, [requestData]);
 
-  const handleDrag = () => {
-    const center = map.getCenter()
-    const bounds = map.getBounds()
-    console.log("Center:", center);
-    console.log("Bounds:", bounds);
-  }
-  
+  const handleDragOrZoom = () => {
+    if (panned) {
+      setPanned(false);
+    } else if (map) {
+      const center = map.getCenter().toJSON();
+      const bounds = map.getBounds().toJSON();
+      const addressData = makeRequestData(center, bounds);
+      setRequestData(addressData);
+    }
+  };
   return (
-    <LoadScript
-      googleMapsApiKey={API_KEY}
-      libraries={libraries}
-    >
+    <LoadScript googleMapsApiKey={API_KEY} libraries={libraries} version="beta">
+      <ColorBar />
       <div className="map-container">
         <div className="search-bar-container">
-          <SearchBar setLocation={setLocation} />
-          {console.log(location)}
+          <SearchBar
+            setRequestData={setRequestData}
+            setViewport={setViewport}
+          />
         </div>
         <div className="map">
-          {console.log("how many times you are repeatibf")}
           <GoogleMap
             mapContainerClassName="map-inner"
-            center={center}
+            center={temp_center}
             zoom={10}
-            options={{ mapId: MAP_ID }}
+            options={options}
             onLoad={onLoad}
-            onDragEnd={handleDrag}
+            onDragEnd={handleDragOrZoom}
+            onIdle={handleDragOrZoom}
           >
-            {markers && markers.map((marker) => (
-              <Marker
-                position={marker.position}
-                icon={marker.icon}
-                onClick={() => setSelectedMarker(marker)}
-              />
-            ))}
+            {markers &&
+              markers.map((marker) => (
+                <Marker
+                  position={marker.position}
+                  icon={marker.icon}
+                  onClick={() => setSelectedMarker(marker)}
+                  options={{
+                    collisionBehavior:
+                      window.google.maps.CollisionBehavior
+                        .OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+                  }}
+                />
+              ))}
             {selectedMarker && (
               <InfoWindow position={selectedMarker.position}>
-                <InfoWindowContent content={selectedMarker.content} />
+                {selectedMarker.type === "safety" ? (
+                  <SafetyInfoWindow card={selectedMarker} />
+                ) : (
+                  <TrafficInfoWindow card={selectedMarker} />
+                )}
               </InfoWindow>
             )}
           </GoogleMap>
         </div>
       </div>
     </LoadScript>
-  )
+  );
 }
 
 export default MapContainer;
