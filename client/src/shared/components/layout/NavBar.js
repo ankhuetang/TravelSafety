@@ -49,19 +49,16 @@ const NavBar = () => {
 
   return (
     <Fragment>
-      <Navbar className="navbar-translucent">
+      <Navbar className="navbar-translucent" expand="lg">
         <Container>
-          <Navbar.Brand className="travel-safety">
-            {" "}
-            <i className="fa-solid fa-suitcase"></i> TravelSafety
+          <Navbar.Brand href="/" className="travel-safety-logo">
+            <span className="logo-circle">
+              <i className="fas fa-suitcase"></i>
+            </span>
+            <span className="logo-text">SafeTraveler</span>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link href="/" className="home-link">
-                Home
-              </Nav.Link>
-            </Nav>
             <Nav className="justify-content-end">
               {isAuthenticated ? authLinks : guestLinks}
             </Nav>
