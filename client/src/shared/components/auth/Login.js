@@ -19,8 +19,8 @@ const Login = () => {
       // <Navigate to='/' />; // ???
       navigate("/profile");
     }
-
-    if (error === "Invalid credentials") {
+    console.log("error message:", error);
+    if (error !== null) {
       // Kiem tra xem error message o backend co giong khong
       setWarning(error, "danger");
       clearErrors();

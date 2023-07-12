@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = function (req, res, next) {
 	console.log('auth in middleware called');
-	console.log('req is initially', req);
+	// console.log('req is initially', req);
 	// Get token from header
 	const token = req.header('x-auth-token');
 
@@ -16,6 +16,7 @@ module.exports = function (req, res, next) {
 	try {
 		const decoded = jwt.verify(token, 'supersecret_dont_share');
 		req.user = decoded.userId;
+		console.log('req.user is: ', req.user);
 		next();
 	} catch (err) {
 		console.log('console: Token is not valid');

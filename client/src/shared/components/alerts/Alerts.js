@@ -6,16 +6,15 @@ import AlertItem from "./AlertItem";
 const Alerts = () => {
   const alertContext = useContext(AlertContext);
 
-  // const { alerts, filtered, getAlerts, loading } = alertContext;
-  const { alerts, filtered, loading } = alertContext;
+  const { alerts, filtered, loading, getAlerts } = alertContext;
 
-  // useEffect(() => {
-  //   console.log("calling getAlerts");
-  //   setTimeout(() => {
-  //     getAlerts();
-  //   }, 200);
-  //   // eslint-disable-next-line
-  // }, []);
+  useEffect(() => {
+    console.log("calling getAlerts");
+    setTimeout(() => {
+      getAlerts();
+    }, 200);
+    // eslint-disable-next-line
+  }, []);
 
   if (alerts.length === 0) {
     return (
@@ -27,6 +26,26 @@ const Alerts = () => {
     );
   }
 
+  // if (filtered !== null) {
+  //   console.log("filtered is not null: ", filtered);
+  //   return (
+  //     <Fragment>
+  //       {filtered.map((alert) => (
+  //         <AlertItem key={alert._id} alert={alert} />
+  //       ))}
+  //     </Fragment>
+  //   );
+  // } else {
+  //   console.log("filtered is null, alerts are: ", alerts);
+  //   return (
+  //     <Fragment>
+  //       {alerts.map((alert) => (
+  //         <AlertItem key={alert._id} alert={alert} />
+  //       ))}
+  //     </Fragment>
+  //   );
+  // }
+
   return (
     <Fragment>
       {filtered !== null
@@ -34,6 +53,13 @@ const Alerts = () => {
         : alerts.map((alert) => <AlertItem key={alert._id} alert={alert} />)}
     </Fragment>
   );
+  // return (
+  //   <Fragment>
+  //     {filtered !== null
+  //       ? filtered.map((alert) => console.log(alert))
+  //       : alerts.map((alert) => console.log(alert))}
+  //   </Fragment>
+  // );
 };
 
 export default Alerts;

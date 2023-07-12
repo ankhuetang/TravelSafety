@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 
 const mapController = require('../controllers/map-controllers');
 const subscriptionController = require('../controllers/subscription-controllers');
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -19,13 +19,16 @@ router.post(
 router.post(
 	'/subscription',
 	[
-		check('address').not().isEmpty(),
-		check('radius').not().isEmpty(),
-		check('duration').not().isEmpty(),
+		checkAuth, // get userID by calling this
+		[
+			check('address').not().isEmpty(),
+			check('radius').not().isEmpty(),
+			check('duration').not().isEmpty(),
+		],
 	],
 	subscriptionController.subscribe
 );
 
-router.get('/profile', subscriptionController.getSubscription);
+router.get('/profile', checkAuth, subscriptionController.getSubscription);
 
 module.exports = router;

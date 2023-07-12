@@ -25,7 +25,7 @@ export default (state, action) => {
     case CLEAR_ALERTS:
       return {
         ...state,
-        alerts: null,
+        alerts: [],
         filtered: null,
         error: null,
         current: null,
@@ -35,7 +35,7 @@ export default (state, action) => {
         ...state,
         filtered: state.alerts.filter((alert) => {
           const regex = new RegExp(`${action.payload}`, "gi");
-          return alert.location.match(regex);
+          return alert.address.match(regex);
         }),
       };
     case CLEAR_FILTER:
