@@ -11,7 +11,7 @@ router.post(
 	'/signup',
 	[
 		check('name').not().isEmpty(),
-		// check('phone').not().isEmpty(),
+		check('phone').not().isEmpty(),
 		check('email').normalizeEmail().isEmail(),
 		check('password').isLength({ min: 6 }),
 	],
@@ -32,10 +32,10 @@ router.post(
 
 router.get('/data', auth, async (req, res) => {
 	try {
-		console.log('HELLUUUUU');
+		// console.log('HELLUUUUU');
 		const user = await User.findById(req.user).select('-password');
 		console.log('USER IS ', user);
-		res.json(user);
+		res.json(user); // trong user co userID
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).send('Server error');

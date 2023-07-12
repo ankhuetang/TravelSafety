@@ -15,7 +15,7 @@ const signup = async (req, res, next) => {
 		);
 	}
 
-	const { name, email, password } = req.body; //add phone
+	const { name, email, password, phone } = req.body;
 
 	let existingUser;
 	try {
@@ -48,7 +48,7 @@ const signup = async (req, res, next) => {
 		name,
 		email,
 		password: hashedPassword,
-		// phone,
+		phone,
 	});
 
 	try {
@@ -75,6 +75,7 @@ const signup = async (req, res, next) => {
 	console.log(token);
 	res
 		.status(201) //201 code means created
+		// DAY LA RES SE DUOC TRA VE
 		.json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 

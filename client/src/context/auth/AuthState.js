@@ -47,6 +47,7 @@ const AuthState = (props) => {
 
   // Register user
   const register = async (formData) => {
+    console.log("register function called");
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -58,12 +59,15 @@ const AuthState = (props) => {
         formData,
         config
       );
+      console.log("Success! res is", res);
       dispatch({ type: REGISTER_SUCCESS, payload: res.data });
       setTimeout(() => {
         loadUser();
       }, "100");
     } catch (err) {
-      dispatch({ type: REGISTER_FAIL, payload: err.response.data.msg });
+      console.log("there is an error!", err);
+      console.log("error content:", err);
+      dispatch({ type: REGISTER_FAIL, payload: err.message });
     }
   };
 
@@ -85,7 +89,9 @@ const AuthState = (props) => {
         loadUser();
       }, 1000);
     } catch (err) {
-      dispatch({ type: LOGIN_FAIL, payload: err.response.data.msg });
+      console.log("there is an error!", err);
+      console.log("error content:", err);
+      dispatch({ type: LOGIN_FAIL, payload: err.message });
     }
   };
 

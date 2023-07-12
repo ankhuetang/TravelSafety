@@ -13,13 +13,14 @@ const Register = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
+    console.log("Register is calling useEffect()");
     // props.history.push() is deprecated!!! Use Navigate from react-router-dom instead
     if (isAuthenticated) {
       console.log("User is authenticated. Rendering profile page");
       navigate("/profile");
     }
-
-    if (error === "User already exists") {
+    console.log("error message:", error);
+    if (error !== null) {
       setWarning(error, "danger");
       clearErrors();
     }
@@ -29,17 +30,19 @@ const Register = () => {
   const [user, setUser] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     password2: "",
   });
 
-  const { name, email, password, password2 } = user;
+  const { name, email, phone, password, password2 } = user;
 
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
   const onSubmit = (e) => {
+    console.log("Submit button clicked");
     e.preventDefault();
-    if (name === "" || email === "" || password === "") {
+    if (name === "" || email === "" || phone === "" || password === "") {
       setWarning("Please enter all fields", "danger");
     } else if (password !== password2) {
       setWarning("Passwords do not match", "danger");
@@ -47,6 +50,7 @@ const Register = () => {
       register({
         name,
         email,
+        phone,
         password,
       });
     }
@@ -74,6 +78,16 @@ const Register = () => {
             type="email"
             name="email"
             value={email}
+            onChange={onChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone">Phone Number</label>
+          <input
+            type="text"
+            name="phone"
+            value={phone}
             onChange={onChange}
             required
           />
