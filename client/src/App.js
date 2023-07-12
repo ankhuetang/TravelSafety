@@ -31,7 +31,6 @@ const App = () => {
                 <Warnings />
                 <Routes>
                   <Route exact path="/" element={<MapContainer />} />
-                  {/* <Route exact path="/profile" element={<Profile />} /> */}
                   <Route
                     exact
                     path="/profile"
