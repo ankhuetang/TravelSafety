@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useEffect } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import "./NavBar.css";
 import AuthContext from "../../../context/auth/AuthContext";
 import AlertContext from "../../../context/alert/AlertContext";
@@ -48,7 +48,7 @@ const NavBar = () => {
   );
 
   return (
-    <div>
+    <Fragment>
       <Navbar className="navbar-translucent" expand="lg">
         <Container>
           <Navbar.Brand href="/" className="travel-safety-logo">
@@ -60,15 +60,7 @@ const NavBar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <Nav.Link href="/profile" className="nav-link">
-                Profile
-              </Nav.Link>
-              <Nav.Link href="/register" className="nav-link">
-                Register
-              </Nav.Link>
-              <Nav.Link href="/login" className="nav-link">
-                Login
-              </Nav.Link>
+              {isAuthenticated ? authLinks : guestLinks}
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -78,4 +70,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
