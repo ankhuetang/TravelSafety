@@ -58,4 +58,8 @@ async function sendAlerts() {
 	});
 }
 
-const alertJob = schedule.scheduleJob('0 0 * * *', sendAlerts);
+module.exports = {
+	sendSMS: async () => {
+		const alertJob = schedule.scheduleJob('0 0 * * *', sendAlerts);
+	},
+};
