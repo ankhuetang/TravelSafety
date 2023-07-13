@@ -21,7 +21,7 @@ function MapContainer() {
   const [requestData, setRequestData] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [panned, setPanned] = useState(false);
+  const [searched, setSearched] = useState(false);
   const [viewport, setViewport] = useState(null);
 
   const onLoad = useCallback((map) => {
@@ -46,9 +46,8 @@ function MapContainer() {
         );
         if (response.data) {
           console.log(response.data)
-          const { markers, viewport } = await makeMarkers(response.data);
-          map.fitBounds(viewport);
-          setPanned(true);
+          const { markers } = await makeMarkers(response.data);
+          if (searched) map.fitBounds(viewport);
           markers.forEach((marker) =>
             setMarkers((prevMarkers) => [...prevMarkers, marker])
           );
@@ -61,8 +60,8 @@ function MapContainer() {
   }, [requestData]);
 
   const handleDragOrZoom = () => {
-    if (panned) {
-      setPanned(false);
+    if (searched) {
+      setSearched(false);
     } else if (map) {
       const center = map.getCenter().toJSON();
       const bounds = map.getBounds().toJSON();
@@ -78,6 +77,7 @@ function MapContainer() {
           <SearchBar
             setRequestData={setRequestData}
             setViewport={setViewport}
+            setSearched={setSearched}
           />
         </div>
         <div className="map">
