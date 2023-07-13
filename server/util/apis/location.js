@@ -1,7 +1,8 @@
 //geoCoding: get location for an address
 const axios = require('axios');
 require('dotenv').config({ path: '../../.env' });
-const API_KEY = process.env.LOCATION_API_KEY;
+// const API_KEY = process.env.LOCATION_API_KEY;
+const API_KEY = 'AIzaSyBkK2gtHoD8EMtpIxVraiZR1n0LcNYA-H8';
 
 // const address = '212 Huxley Avenue, Providence';
 

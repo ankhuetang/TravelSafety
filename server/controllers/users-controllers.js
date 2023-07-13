@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const HttpError = require('../middleware/check-auth');
+const HttpError = require('../models/http-error');
 
 const User = require('../models/user');
 
@@ -52,7 +52,9 @@ const signup = async (req, res, next) => {
 	});
 
 	try {
-		await createdUser.save();
+		// console.log(createdUser);
+		const user = await createdUser.save();
+		console.log(user);
 	} catch (err) {
 		const error = new HttpError('Failed to save your data to DB', 500);
 		return next(error);
@@ -70,8 +72,10 @@ const signup = async (req, res, next) => {
 		return next(error);
 	}
 
+	console.log(token);
 	res
 		.status(201) //201 code means created
+		// DAY LA RES SE DUOC TRA VE
 		.json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 

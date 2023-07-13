@@ -1,0 +1,62 @@
+body {
+  font-family: 'Public Sans', sans-serif;
+}
+
+.travel-safety-logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #4285f4;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+.logo-text {
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: 24px;
+  color: #00000085;
+
+}
+
+.logo-text:hover, logo-text:focus {
+  color: #000
+}
+
+.navbar-translucent {
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  border: none;
+}
+
+.nav-link {
+  color: #4285f4;
+  font-weight: bold;
+  /* opacity: 0.8; */
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: #4285f4;
+  opacity: 0.5;
+}
+
+.navbar-collapse {
+  justify-content: flex-end;
+}
+
+.navbar-toggler {
+  color: #4285f4;
+}
+
+.navbar-toggler:hover {
+  opacity: 0.5;
+}
