@@ -1,22 +1,27 @@
-// TODO: Clear location input after submitting
-
-import React, { useCallback, useContext, useState } from "react";
-import { Form, Button, Container } from "react-bootstrap";
-import "./AlertForm.css";
+import React, { useContext, useState } from "react";
 import { Autocomplete, LoadScript } from "@react-google-maps/api";
-import axios from "axios";
 import AlertContext from "../../../context/alert/AlertContext";
+import {
+  Box,
+  Button,
+  FormControl,
+  Input,
+  Typography,
+  FormLabel,
+} from "@mui/joy";
+import { form } from "../styles";
 
 const AlertForm = () => {
   const alertContext = useContext(AlertContext);
   const { addAlert } = alertContext;
+  const [autocompleteObject, setAutocompleteObject] = useState(null);
   const [alert, setAlert] = useState({
-    autocompleteObject: null,
+    // autocompleteObject: null, // This might be causing a problem
     location: "",
     duration: "",
     radius: "",
   });
-  const { autocompleteObject, location, duration, radius } = alert;
+  const { location, duration, radius } = alert;
   const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   const onSubmit = (e) => {
@@ -34,7 +39,8 @@ const AlertForm = () => {
   };
 
   const onLoad = (autocomplete) => {
-    setAlert({ ...alert, autocompleteObject: autocomplete });
+    // setAlert({ ...alert, autocompleteObject: autocomplete });
+    setAutocompleteObject(autocomplete);
     // console.log(alert);
   };
 
@@ -73,80 +79,55 @@ const AlertForm = () => {
 
   return (
     <LoadScript googleMapsApiKey={API_KEY} libraries={["places"]}>
-      <div>
-        <Container className="d-flex justify-content-center">
-          <Form.Text className="description">
-            <h2>Add Alert</h2>
-          </Form.Text>
-        </Container>
-        <Container className="d-flex justify-content-center">
-          <Form.Text className="description">
+      <Box component="main" sx={form}>
+        <div>
+          <Typography component="h1" fontSize="xl2" fontWeight="lg">
+            Add Alert
+          </Typography>
+          <Typography level="body2" sx={{ my: 1, mb: 3 }}>
             Specify a location to receive daily alerts via message
-          </Form.Text>
-        </Container>
-        <Container className="d-flex justify-content-center">
-          <div className="alert-form">
-            <Form onSubmit={onSubmit}>
-              <Form.Group controlId="location">
-                <Form.Label>
-                  Location
-                  <span className="red-asterisk">*</span>
-                </Form.Label>
-                <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-                  <input type="text" placeholder="Enter location" />
-                </Autocomplete>
-              </Form.Group>
-              <Form.Group controlId="duration">
-                <Form.Label>
-                  Duration (in days)
-                  <span className="red-asterisk">*</span>
-                </Form.Label>
-                <Form.Control
-                  type="number"
-                  min={1}
-                  name="duration"
-                  value={duration}
-                  onChange={onChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="radius">
-                <Form.Label>
-                  Radius (in miles)
-                  <span className="red-asterisk">*</span>
-                </Form.Label>
-                <Form.Control
-                  type="number"
-                  min={1}
-                  name="radius"
-                  value={radius}
-                  onChange={onChange}
-                />
-              </Form.Group>
-              <Container className="d-flex justify-content-center">
-                {formIsValid ? (
-                  <Button
-                    className="submit-button"
-                    variant="primary"
-                    type="submit"
-                  >
-                    Subscribe
-                  </Button>
-                ) : (
-                  <fieldset disabled>
-                    <Button
-                      className="submit-button"
-                      variant="secondary"
-                      type="submit"
-                    >
-                      Subscribe
-                    </Button>
-                  </fieldset>
-                )}
-              </Container>
-            </Form>
-          </div>
-        </Container>
-      </div>
+          </Typography>
+        </div>
+        <form onSubmit={onSubmit}>
+          <FormControl required>
+            <FormLabel> Location</FormLabel>
+            <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+              <Input placeholder="Enter location" />
+            </Autocomplete>
+          </FormControl>
+          <FormControl required>
+            <FormLabel>Duration (in days)</FormLabel>
+            <Input
+              type="number"
+              min={1}
+              name="duration"
+              value={duration}
+              onChange={onChange}
+            />
+          </FormControl>
+          <FormControl required>
+            <FormLabel>Radius (in miles)</FormLabel>
+            <Input
+              type="number"
+              min={1}
+              name="radius"
+              value={radius}
+              onChange={onChange}
+            />
+          </FormControl>
+          {formIsValid ? (
+            <Button type="submit" fullWidth>
+              Subscribe
+            </Button>
+          ) : (
+            <fieldset disabled>
+              <Button type="submit" fullWidth>
+                Subscribe
+              </Button>
+            </fieldset>
+          )}
+        </form>
+      </Box>
     </LoadScript>
   );
 };

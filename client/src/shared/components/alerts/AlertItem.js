@@ -1,33 +1,69 @@
 import React from "react";
-import "@fortawesome/fontawesome-free/css/all.css";
+import {
+  Box,
+  ListItemDecorator,
+  Card,
+  CardContent,
+  Chip,
+  Typography,
+  Stack,
+} from "@mui/joy";
+import { LocationOn } from "@mui/icons-material";
+
 const AlertItem = ({ alert }) => {
-  const { id, location, duration, radius } = alert;
+  // Destructure field address inside alert, rename it to location
+  const { address: location, duration, radius } = alert;
   console.log("AlertItem component called");
-  console.log(location);
+  console.log("AlertItem is", alert);
+  // console.log(location);
 
   return (
-    <div className="card bg-light">
-      <h3 className="text-primary text-left">{`Alert #${id}`}</h3>
-      <ul className="list">
-        {location && (
-          <li>
-            <i className="fa-solid fa-location-dot"></i> {" Location: "}
+    <Box>
+      <Card
+        variant="outlined"
+        orientation="horizontal"
+        sx={{
+          width: 400,
+          "&:hover": {
+            boxShadow: "md",
+            borderColor: "neutral.outlinedHoverBorder",
+          },
+        }}
+      >
+        <CardContent>
+          <Typography
+            level="h2"
+            fontSize="lg"
+            id="card-description"
+            mb={0.5}
+            sx={{ py: 1 }}
+          >
+            <ListItemDecorator>
+              <LocationOn />
+            </ListItemDecorator>{" "}
             {location}
-          </li>
-        )}
-        {radius && (
-          <li>
-            <i className="fa-solid fa-ruler"></i> {" Radius: "} {radius} {" Km"}
-          </li>
-        )}
-        {duration && (
-          <li>
-            <i className="fa-solid fa-clock"></i> {" Duration: "} {duration}
-            {" days"}
-          </li>
-        )}
-      </ul>
-    </div>
+          </Typography>
+          <Stack direction="row" spacing={1}>
+            <Chip
+              variant="outlined"
+              color="primary"
+              size="sm"
+              sx={{ pointerEvents: "none" }}
+            >
+              within {radius} kms
+            </Chip>
+            <Chip
+              variant="outlined"
+              color="primary"
+              size="sm"
+              sx={{ pointerEvents: "none" }}
+            >
+              for {duration} days
+            </Chip>
+          </Stack>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 

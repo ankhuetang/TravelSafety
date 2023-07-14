@@ -63,4 +63,4 @@ const RGBToHex = (r, g, b) => {
   return `#${rHex}${gHex}${bHex}`;
 };
 
-export default generateColorRange("#FF0000", "#FFFF00", "#008000", 100);
+export default generateColorRange("#ff1744", "#ffeb3b", "#4caf50", 100);
