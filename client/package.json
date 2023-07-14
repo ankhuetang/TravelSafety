@@ -14,7 +14,7 @@
     "@mdi/js": "^7.2.96",
     "@mui/icons-material": "^5.14.0",
     "@mui/joy": "^5.0.0-alpha.86",
-    "@mui/material": "^5.13.7",
+    "@mui/material": "^5.14.0",
     "@react-google-maps/api": "^2.18.1",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.0",
