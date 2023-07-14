@@ -55,7 +55,7 @@ function MapContainer() {
           );
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
       }
     };
     requestData.map((data) => fetchData(data));

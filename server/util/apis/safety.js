@@ -30,9 +30,10 @@ async function getSafetyScore(location, radius) {
 	});
 
 	const data = response.data;
-	console.log(data);
+	// console.log(data);
 	if (!data || response.statusCode !== 200) {
 		console.log('No safety data available');
+		return [];
 	}
 
 	return data;

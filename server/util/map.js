@@ -47,10 +47,11 @@ async function createSafety(safetyScores) {
 			index ===
 			self.findIndex(
 				(o) =>
-					o.point.coordinates[0] === obj.point.coordinates[0] &&
-					o.point.coordinates[1] === obj.point.coordinates[1]
+					o.geoCode.latitude === obj.geoCode.latitude &&
+					o.geoCode.longitude === obj.geoCode.longitude
 			)
 	);
+	console.log(uniqueSafety);
 
 	for (const safetyScore of uniqueSafety) {
 		const createdSafety = new Safety({
