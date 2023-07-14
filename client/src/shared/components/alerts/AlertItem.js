@@ -44,7 +44,7 @@ const AlertItem = ({ alert }) => {
               size="sm"
               sx={{ pointerEvents: "none" }}
             >
-              in {radius} kms
+              within {radius} kms
             </Chip>
             <Chip
               variant="outlined"
