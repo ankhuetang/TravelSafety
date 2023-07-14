@@ -44,8 +44,10 @@ function MapContainer() {
           "http://localhost:8000/api/map/data",
           data
         );
+        console.log(response);
+        console.log(response.data);
         if (response.data) {
-          console.log(response.data)
+          console.log(response.data);
           const { markers, viewport } = await makeMarkers(response.data);
           map.fitBounds(viewport);
           setPanned(true);

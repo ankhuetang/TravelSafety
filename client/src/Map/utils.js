@@ -129,16 +129,16 @@ export function makeRequestData(center, bounds) {
   const radius = calculateRadius(center, bounds);
   const areas = findCoordinates(radius, center);
   const requestData = [];
-  const geocoder = new window.google.maps.Geocoder();
+  // const geocoder = new window.google.maps.Geocoder();
   areas.forEach((area) => {
     let address = "";
-    geocoder.geocode({ location: area.coordinates }, (results, status) => {
-      try {
-        address = results[0].formatted_address;
-      } catch (error) {
-        console.log(error.message);
-      }
-    });
+    // geocoder.geocode({ location: area.coordinates }, (results, status) => {
+    //   try {
+    //     address = results[0].formatted_address;
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   }
+    // });
     const data = {
       address: address,
       coordinates: area.coordinates,
