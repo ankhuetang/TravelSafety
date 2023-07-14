@@ -59,6 +59,12 @@ async function scrapeAll() {
 	};
 }
 
+module.exports = {
+	scheduleScrape: async () => {
+		schedule.scheduleJob('0 0 * * *', scrapeAll);
+	},
+};
+
 // scrapeAll()
 // 	.then((res) => {
 // 		console.log(res);
@@ -66,7 +72,5 @@ async function scrapeAll() {
 // 	.catch((err) => {
 // 		console.log(err);
 // 	});
-
-const job = schedule.scheduleJob('0 0 * * *', scrapeAll);
 
 // 0 0 * * * /usr/local/bin/node /Users/phuongcao/Documents/VietTech/TravelSafety/server/util/webscraping/scheduleScrape.js

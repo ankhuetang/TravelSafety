@@ -44,8 +44,10 @@ function MapContainer() {
           "http://localhost:8000/api/map/data",
           data
         );
+        console.log(response);
+        console.log(response.data);
         if (response.data) {
-          console.log(response.data)
+          console.log(response.data);
           const { markers } = await makeMarkers(response.data);
           if (searched) map.fitBounds(viewport);
           markers.forEach((marker) =>
@@ -53,7 +55,7 @@ function MapContainer() {
           );
         }
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
       }
     };
     requestData.map((data) => fetchData(data));

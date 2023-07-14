@@ -8,7 +8,6 @@ const Crime = require('../models/crime');
 
 //createPlace
 async function createPlace(address, coordinates) {
-	console.log(address);
 	const createdPlace = new Place({
 		address: address,
 		location: {
@@ -23,7 +22,7 @@ async function createPlace(address, coordinates) {
 		await createdPlace.save({ session: sess });
 		await sess.commitTransaction();
 	} catch (err) {
-		console.error(err);
+		console.log(err);
 	}
 	return createdPlace;
 }
@@ -35,7 +34,7 @@ async function getPlaceByAddress(address) {
 	try {
 		place = await Place.find({ address: address });
 	} catch (err) {
-		console.error(err);
+		console.log(err);
 	}
 	return place;
 }
@@ -48,10 +47,11 @@ async function createSafety(safetyScores) {
 			index ===
 			self.findIndex(
 				(o) =>
-					o.point.coordinates[0] === obj.point.coordinates[0] &&
-					o.point.coordinates[1] === obj.point.coordinates[1]
+					o.geoCode.latitude === obj.geoCode.latitude &&
+					o.geoCode.longitude === obj.geoCode.longitude
 			)
 	);
+	console.log(uniqueSafety);
 
 	for (const safetyScore of uniqueSafety) {
 		const createdSafety = new Safety({
@@ -81,7 +81,7 @@ async function createSafety(safetyScores) {
 			await sess.commitTransaction();
 			createdSafeties.push(createdSafety);
 		} catch (err) {
-			console.error(err);
+			console.log(err);
 		}
 	}
 
@@ -124,7 +124,7 @@ async function createTraffic(trafficInfos) {
 				createdTraffic.push(traffic);
 			}
 		} catch (error) {
-			console.error(error);
+			console.log(error);
 		}
 	}
 
@@ -147,7 +147,7 @@ async function getSafetyByLocation(coordinates, radius) {
 			},
 		});
 	} catch (err) {
-		console.error(err);
+		console.log(err);
 	}
 
 	return safety;
@@ -169,7 +169,7 @@ async function getTrafficByLocation(coordinates, radius) {
 			},
 		});
 	} catch (err) {
-		console.error(err);
+		console.log(err);
 	}
 
 	return traffic;
@@ -195,7 +195,7 @@ async function createCrime(crimeList) {
 			await sess.commitTransaction();
 			createdCrimes.push(createdCrime);
 		} catch (err) {
-			console.error(err);
+			console.log(err);
 		}
 	}
 
@@ -217,7 +217,7 @@ async function getCrimeByLocation(coordinates, radius) {
 			},
 		});
 	} catch (err) {
-		console.error(err);
+		console.log(err);
 	}
 	return crime; //return list of crimes
 }
