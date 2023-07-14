@@ -1,9 +1,6 @@
-// TODO: Style the form a bit: Add some top margin, and align the form with the alert cards
-// NO NEED TO CHANGE
-
 import React, { useContext, useRef, useEffect } from "react";
 import AlertContext from "../../../context/alert/AlertContext";
-
+import { Input } from "@mui/joy";
 const AlertFilter = () => {
   const alertContext = useContext(AlertContext);
   const { filterAlerts, clearFilter, filtered } = alertContext;
@@ -24,14 +21,14 @@ const AlertFilter = () => {
   };
 
   return (
-    <form style={{ marginRight: "100px", marginTop: "20px" }}>
-      <input
-        ref={text}
-        type="text"
-        placeholder="Filter Alerts ..."
-        onChange={onChange}
-      />
-    </form>
+    <Input
+      ref={text}
+      type="text"
+      placeholder="Filter Alerts..."
+      onChange={onChange}
+      variant="solid"
+      color="primary"
+    />
   );
 };
 
