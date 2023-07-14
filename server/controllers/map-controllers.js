@@ -8,7 +8,9 @@ const mapUtil = require('../util/map');
 const getSearchByAddress = async (req, res, next) => {
 	try {
 		// 1a. Get lat, lon from address
+		console.log(req.body);
 		const { address, coordinates, radius } = req.body;
+		const rad = Math.min(10, Math.round(radius));
 
 		// let coordinates;
 		// try {
@@ -29,6 +31,7 @@ const getSearchByAddress = async (req, res, next) => {
 			try {
 				place = await mapUtil.createPlace(address, coordinates);
 			} catch (error) {
+				place = [];
 				return next(error);
 			}
 		}
@@ -36,25 +39,27 @@ const getSearchByAddress = async (req, res, next) => {
 		// 2. Get Traffic documents using GeoSearch
 		let traffic;
 		try {
-			traffic = await mapUtil.getTrafficByLocation(coordinates, radius);
+			traffic = await mapUtil.getTrafficByLocation(coordinates, rad);
 		} catch (error) {
+			traffic = [];
 			return next(error);
 		}
-
 		// 3a. Check if no doc return, then make req to api
 		//neu traffic la array thi fai check if traffic.length ===0 nha
 		if (!traffic || traffic.length === 0) {
-			let newTrafficInfo = await getTrafficInfo(coordinates, radius);
+			let newTrafficInfo = await getTrafficInfo(coordinates, rad);
 			if (traffic || traffic.length !== 0) {
 				// 3b. Save traffic (mongo)
 				traffic = await mapUtil.createTraffic(newTrafficInfo);
+			} else {
+				traffic = [];
 			}
 		}
 
 		// 4.Get SafetyByLocation in DB
-		let safetyScore;
+		let safetyScore = [];
 		try {
-			safetyScore = await mapUtil.getSafetyByLocation(coordinates, radius);
+			safetyScore = await mapUtil.getSafetyByLocation(coordinates, rad);
 			// console.log('safety is ', safetyScore);
 		} catch (err) {
 			return next(err);
@@ -62,34 +67,37 @@ const getSearchByAddress = async (req, res, next) => {
 
 		// 5a. Check if no doc return, then make req to api
 		if (safetyScore.length === 0) {
-			let newSafetyScore = await getSafetyScore(coordinates, radius);
+			let newSafetyScore = await getSafetyScore(coordinates, rad);
 			if (safetyScore.length !== 0) {
 				// 5b. Save safetyScore (mongo)
 				safetyScore = await mapUtil.createSafety(newSafetyScore);
+			} else {
+				safetyScore = [];
 			}
 		}
 
 		//6. Get CrimeByLocation in DB
 		let crime;
 		try {
-			crime = await mapUtil.getCrimeByLocation(coordinates, radius);
+			crime = await mapUtil.getCrimeByLocation(coordinates, rad);
 		} catch (err) {
+			crime = [];
 			return next(err);
 		}
 
 		if (crime.length === 0) {
 			console.log('No crime data available');
 		}
-
 		// 7. Respond Object (2 key: safetyScore, traffic)
 		res.status(201).json({
 			place: place,
 			safetyScore: safetyScore,
 			traffic: traffic,
-			// Crime: crime,
+			Crime: crime,
 		});
 	} catch (error) {
-		console.log(error.message);
+		console.log(error);
+		res.send([]);
 	}
 };
 
