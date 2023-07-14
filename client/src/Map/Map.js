@@ -71,7 +71,6 @@ function MapContainer() {
   };
   return (
     <LoadScript googleMapsApiKey={API_KEY} libraries={libraries} version="beta">
-      <ColorBar />
       <div className="map-container">
         <div className="search-bar-container">
           <SearchBar

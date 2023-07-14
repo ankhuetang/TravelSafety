@@ -1,8 +1,20 @@
-// CHANGE THIS!!!
 import React, { useState, useContext, useEffect } from "react";
 import WarningContext from "../../../context/warning/WarningContext";
 import AuthContext from "../../../context/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { CssVarsProvider } from "@mui/joy/styles";
+import customTheme from "../../theme";
+import {
+  GlobalStyles,
+  CssBaseline,
+  Box,
+  Button,
+  FormControl,
+  Input,
+  Typography,
+  FormLabel,
+} from "@mui/joy";
+import { root, formSide, formContainer, form, imageSide } from "../styles";
 
 const Login = () => {
   const authContext = useContext(AuthContext);
@@ -39,6 +51,9 @@ const Login = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    const formElements = e.currentTarget.elements;
+    const email = formElements.email.value;
+    const password = formElements.password.value;
     if (email === "" || password === "") {
       setWarning("Please fill in all fields", "danger");
     } else {
@@ -47,38 +62,61 @@ const Login = () => {
   };
 
   return (
-    <div className="form-container">
-      <h1>
-        Account <span className="text-primary">Login</span>
-      </h1>
-      <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email Address</label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={onChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            onChange={onChange}
-            required
-          />
-        </div>
-        <input
-          type="submit"
-          value="Login"
-          className="btn btn-primary btn-block"
-        />
-      </form>
-    </div>
+    <CssVarsProvider
+      defaultMode="light"
+      disableTransitionOnChange
+      theme={customTheme}
+    >
+      <CssBaseline />
+      <GlobalStyles
+        styles={{
+          ":root": root,
+        }}
+      />
+      <Box sx={(theme) => formSide}>
+        <Box sx={formContainer}>
+          <Box component="main" sx={form}>
+            <div>
+              <Typography component="h1" fontSize="xl2" fontWeight="lg">
+                Sign in to your account
+              </Typography>
+              <Typography level="body2" sx={{ my: 1, mb: 3 }}>
+                Welcome back
+              </Typography>
+            </div>
+            <form onSubmit={onSubmit}>
+              <FormControl required>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={onChange}
+                />
+              </FormControl>
+              <FormControl required>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={onChange}
+                />
+              </FormControl>
+              <Button type="submit" fullWidth>
+                Sign in
+              </Button>
+            </form>
+          </Box>
+          <Box component="footer" sx={{ py: 3 }}>
+            <Typography level="body3" textAlign="center">
+              © Safe Traveler {new Date().getFullYear()}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Box sx={(theme) => imageSide} />
+    </CssVarsProvider>
   );
 };
 
