@@ -10,7 +10,10 @@ const getSearchByAddress = async (req, res, next) => {
 		// 1a. Get lat, lon from address
 		console.log(req.body);
 		const { address, coordinates, radius } = req.body;
-		const rad = Math.min(10, Math.round(radius));
+		let rad = Math.min(10, Math.round(radius));
+		if (rad === 0) {
+			rad = 1;
+		}
 
 		// let coordinates;
 		// try {
