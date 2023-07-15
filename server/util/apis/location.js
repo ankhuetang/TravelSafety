@@ -1,10 +1,9 @@
 //geoCoding: get location for an address
 const axios = require('axios');
 require('dotenv').config({ path: '../../.env' });
-// const API_KEY = process.env.LOCATION_API_KEY;
-const API_KEY = 'AIzaSyBkK2gtHoD8EMtpIxVraiZR1n0LcNYA-H8';
+const API_KEY = process.env.LOCATION_API_KEY;
 
-// const address = '212 Huxley Avenue, Providence';
+//const address = '212 Huxley Avenue, Providence';
 
 async function getCoordsForAddress(address) {
 	const response = await axios.get(
@@ -14,6 +13,7 @@ async function getCoordsForAddress(address) {
 	);
 
 	const data = response.data;
+	// console.log(data);
 
 	if (!data || data.status === 'ZERO_RESULTS') {
 		throw new Error('Could not find data for given address.');
