@@ -182,17 +182,14 @@ async function createCrime(crimeList) {
 		const createdCrime = new Crime({
 			type: crime.type,
 			address: crime.address,
-			date: crime.date,
+			date: new Date(crime.date),
 			location: {
-				coordinates: [crime.location.longtitude, crime.location.latitude],
+				coordinates: [crime.location.longitude, crime.location.latitude],
 			},
 		});
 
 		try {
-			const sess = await mongoose.startSession();
-			sess.startTransaction();
-			await createdCrime.save({ session: sess });
-			await sess.commitTransaction();
+			await createdCrime.save();
 			createdCrimes.push(createdCrime);
 		} catch (err) {
 			console.log(err);
