@@ -63,7 +63,7 @@ export function makeMarkers(responseData) {
     markers.push(newMarker);
     viewport.extend(position);
   });
-  console.log(markers);
+  // console.log(markers);
   return { markers, viewport };
 }
 
@@ -79,7 +79,7 @@ function calculateRadius(origin, bounds) {
       lat: bounds.north,
       lng: origin.lng,
     }) / 1000;
-  console.log("calculate radius", width, height);
+  // console.log("calculate radius", width, height);
   let center, horizontal, vertical, diagonal;
   if (width <= 20 && height <= 20) center = Math.max(width, height);
   else {
@@ -122,7 +122,7 @@ function findCoordinates(radius, origin) {
       areas.push({ coordinates: coordinates, radius: diagonal })
     );
   }
-  console.log("find areas", areas);
+  // console.log("find areas", areas);
   return areas;
 }
 export function makeRequestData(center, bounds) {
@@ -136,7 +136,7 @@ export function makeRequestData(center, bounds) {
       try {
         address = results[0].formatted_address;
       } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
       }
     });
     const data = {

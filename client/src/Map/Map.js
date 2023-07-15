@@ -37,7 +37,7 @@ function MapContainer() {
     });
   });
   useEffect(() => {
-    console.log("trigger useEffect", requestData);
+    // console.log("trigger useEffect", requestData);
     const fetchData = async (data) => {
       try {
         const response = await axios.post(
@@ -45,7 +45,7 @@ function MapContainer() {
           data
         );
         if (response.data) {
-          console.log(response.data)
+          // console.log(response.data)
           const { markers } = await makeMarkers(response.data);
           if (searched) map.fitBounds(viewport);
           markers.forEach((marker) =>
@@ -53,7 +53,7 @@ function MapContainer() {
           );
         }
       } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
       }
     };
     requestData.map((data) => fetchData(data));

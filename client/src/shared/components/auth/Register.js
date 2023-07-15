@@ -61,7 +61,7 @@ const Register = () => {
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
   const onSubmit = (e) => {
-    console.log("Submit button clicked");
+    // console.log("Submit button clicked");
     e.preventDefault();
     if (name === "" || email === "" || phone === "" || password === "") {
       setWarning("Please enter all fields", "danger");

@@ -12,7 +12,7 @@ const Alerts = () => {
   const { alerts, filtered, loading, getAlerts } = alertContext;
 
   useEffect(() => {
-    console.log("calling getAlerts");
+    console.log("Alerts component is calling getAlerts");
     setTimeout(() => {
       getAlerts();
     }, 200);
@@ -32,9 +32,15 @@ const Alerts = () => {
   return (
     <Box component="main" sx={form}>
       <AlertFilter />
-      {filtered !== null
-        ? filtered.map((alert) => <AlertItem key={alert._id} alert={alert} />)
-        : alerts.map((alert) => <AlertItem key={alert._id} alert={alert} />)}
+      {filtered !== null ? (
+        filtered.length > 0 ? (
+          filtered.map((alert) => <AlertItem key={alert._id} alert={alert} />)
+        ) : (
+          <h4>We couldn't find any alert that matches your description</h4>
+        )
+      ) : (
+        alerts.map((alert) => <AlertItem key={alert._id} alert={alert} />)
+      )}
     </Box>
   );
 };

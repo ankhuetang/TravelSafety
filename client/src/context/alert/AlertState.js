@@ -27,9 +27,9 @@ const AlertState = (props) => {
     console.log("getAlerts called");
     try {
       const res = await axios.get("http://localhost:8000/api/map/profile");
-      console.log("res.data is: ", res.data);
+      // console.log("res.data is: ", res.data);
       const { Subscription } = res.data;
-      console.log(Subscription);
+      // console.log(Subscription);
       dispatch({ type: GET_ALERTS, payload: Subscription });
     } catch (error) {
       console.log("There is an error!");
@@ -54,7 +54,7 @@ const AlertState = (props) => {
         alert,
         config
       );
-      console.log("res is: ", res);
+      // console.log("res is: ", res);
       // WIP code
       // const user_id = await axios.post("http://localhost:8000/api/user/data");
       // console.log("user_id is: ", user_id);
@@ -78,6 +78,7 @@ const AlertState = (props) => {
 
   // Filter alerts
   const filterAlerts = (text) => {
+    console.log("filterAlerts called with text:", text);
     dispatch({ type: FILTER_ALERTS, payload: text });
   };
   // Clear filter

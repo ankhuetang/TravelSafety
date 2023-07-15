@@ -31,6 +31,7 @@ export default (state, action) => {
         current: null,
       };
     case FILTER_ALERTS:
+      console.log("FILTER_ALERTS reducer called");
       return {
         ...state,
         filtered: state.alerts.filter((alert) => {
