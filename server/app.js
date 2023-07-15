@@ -36,7 +36,7 @@ mongoose
 	.then(() => {
 		app.listen(8000);
 		console.log('connected to DB');
-		scheduleScrape();
+		//scheduleScrape();
 	})
 	.catch((err) => {
 		console.log(err);
