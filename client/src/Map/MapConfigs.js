@@ -8,8 +8,8 @@ const MapConfigs = () => {
     south: 24.7433195,
   };
   const temp_center = {
-    lat: 34.052235,
-    lng: -118.243683,
+    lat: 37.773972,
+    lng: -122.431297,
   };
   const options = {
     minZoom: 9,
