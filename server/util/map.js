@@ -213,11 +213,23 @@ async function getCrimeByLocation(coordinates, radius) {
 				},
 			},
 		});
+		console.log('GET CRIME FROM DB SUCCESSFULLY');
 	} catch (err) {
 		console.log(err);
 	}
 	return crime; //return list of crimes
 }
+// const coordinates = {
+// 	lng: -71.4269316,
+// 	lat: 41.8235906,
+// };
+// getCrimeByLocation(coordinates, 2)
+// 	.then((res) => {
+// 		console.log(res);
+// 	})
+// 	.catch((err) => {
+// 		console.log('ERRORR ', err);
+// 	});
 
 //getPlacesByUserId
 async function getPlacesByUserId(userId) {

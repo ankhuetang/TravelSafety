@@ -27,9 +27,7 @@ app.use(bodyParser.json());
 app.use('/api/map', mapRoutes);
 app.use('/api/user', userRoutes);
 
-// const mongoURI = process.env.MONGO_URI;
-const mongoURI =
-	'mongodb+srv://ktang:Ankhuetang_03@cluster0.4cvsvhx.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGO_URI;
 
 mongoose
 	.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
