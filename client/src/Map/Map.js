@@ -29,11 +29,15 @@ function MapContainer() {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       if (
-        US_BOUNDS.north >= latitude >= US_BOUNDS.south &&
-        US_BOUNDS.west <= longitude <= US_BOUNDS.east
-      )
+        US_BOUNDS.north >= latitude &&
+        latitude >= US_BOUNDS.south &&
+        US_BOUNDS.west <= longitude &&
+        longitude <= US_BOUNDS.east
+      ) {
         map.setCenter({ lat: latitude, lng: longitude });
-      else alert("Your current location is not in the US");
+      } else {
+        alert("Your current location is not in the US");
+      }
     });
   });
   useEffect(() => {
