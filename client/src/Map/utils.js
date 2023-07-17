@@ -81,12 +81,13 @@ function calculateRadius(origin, bounds) {
     }) / 1000;
   console.log("calculate radius", width, height);
   let center, horizontal, vertical, diagonal;
-  if (width <= 20 && height <= 20) center = Math.max(width, height);
+  const val = 20;
+  if (width <= val && height <= val) center = Math.max(width, height);
   else {
-    center = 20;
-    if (width - 20 > 1) horizontal = (width - 20) / 2;
-    if (height - 20 > 1) vertical = (height - 20) / 2;
-    if (width - 20 > 1 && height - 20 > 1)
+    center = val;
+    if (width - val > 1) horizontal = (width - val) / 2;
+    if (height - val > 1) vertical = (height - val) / 2;
+    if (width - val > 1 && height - val > 1)
       diagonal = Math.sqrt(width * width + height * height) / 2;
   }
   return { center, horizontal, vertical, diagonal };
