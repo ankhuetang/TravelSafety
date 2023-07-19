@@ -62,7 +62,10 @@ function MapContainer() {
       }
     };
     if (map) setCurrentLocation(map.getCenter().toJSON());
-    requestData.map((data) => fetchData(data));
+
+    requestData.map((data, index) => {
+      setTimeout(() => fetchData(data), 500 * index);
+    });
   }, [requestData]);
 
   const handleDragOrZoom = () => {
