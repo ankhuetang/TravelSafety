@@ -12,7 +12,7 @@ const getSearchByAddress = async (req, res, next) => {
 		const { address, coordinates, radius } = req.body;
 		let rad = Math.min(10, Math.round(radius));
 		if (rad === 0) {
-			rad = 1;
+			rad = 10;
 		}
 
 		// let coordinates;
@@ -54,6 +54,7 @@ const getSearchByAddress = async (req, res, next) => {
 			if (newTrafficInfo.length !== 0) {
 				// 3b. Save traffic (mongo)
 				traffic = await mapUtil.createTraffic(newTrafficInfo);
+				console.log('TRAFFIC IS '.traffic);
 			} else {
 				traffic = [];
 			}
