@@ -1,10 +1,10 @@
 import colors from "./colors/ColorRange.js";
-import { WhereToVote, FmdBad, WrongLocation } from "@mui/icons-material";
+import { WhereToVote, FmdBad } from "@mui/icons-material";
 import { renderToString } from "react-dom/server";
 import { faCarOn } from "@fortawesome/free-solid-svg-icons";
-import { mdiMapMarkerRemoveVariant } from "@mdi/js";
+import { mdiMapMarkerRemoveVariant, mdiRobber } from "@mdi/js";
 export function makeMarkers(responseData) {
-  const markers = [];
+  const newMarkers = [];
   const viewport = new window.google.maps.LatLngBounds();
   // Safety
   Object.entries(responseData.safetyScore).map((safetyData) => {
@@ -38,7 +38,7 @@ export function makeMarkers(responseData) {
       content: safetyData[1].safetyScore,
       name: safetyData[1].name,
     };
-    markers.push(newMarker);
+    newMarkers.push(newMarker);
     viewport.extend(position);
   });
   // Traffic
@@ -50,21 +50,51 @@ export function makeMarkers(responseData) {
     const newMarker = {
       type: trafficData[1].type,
       position: position,
+      // icon: {
+      //   path: faCarOn.icon[4],
+      //   fillColor: "#ffcc00",
+      //   fillOpacity: 1,
+      //   strokeWeight: 1.25,
+      //   strokeColor: "black",
+      //   scale: 0.075,
+      // },
       icon: {
-        path: faCarOn.icon[4],
-        fillColor: "#ffcc00",
-        fillOpacity: 1,
-        strokeWeight: 1.25,
-        strokeColor: "black",
-        scale: 0.075,
+        url: "/traffic-cone.png", // Specify the URL of the image here
+        scaledSize: new window.google.maps.Size(30, 30), // Set the size of the image
       },
       content: trafficData[1].description,
     };
-    markers.push(newMarker);
+    newMarkers.push(newMarker);
     viewport.extend(position);
   });
-  console.log(markers);
-  return { markers, viewport };
+  // Crime
+  Object.entries(responseData.Crime).map((crimeData) => {
+    const position = {
+      lat: crimeData[1].location.coordinates[1],
+      lng: crimeData[1].location.coordinates[0],
+    };
+    const newMarker = {
+      type: "crime",
+      position: position,
+      icon: {
+        path: mdiRobber,
+        fillColor: "black",
+        fillOpacity: 1,
+        strokeWeight: 0,
+        strokeColor: "black",
+        scale: 1.5,
+      },
+      content: {
+        type: crimeData[1].type,
+        address: crimeData[1].address,
+        date: crimeData[1].date,
+      },
+    };
+    newMarkers.push(newMarker);
+    viewport.extend(position);
+  });
+  console.log(newMarkers);
+  return { newMarkers, viewport };
 }
 
 // radius =  { center, horizontal, vertical, diagonal }
@@ -148,3 +178,52 @@ export function makeRequestData(center, bounds) {
   });
   return requestData;
 }
+
+const areCoordinatesEqual = (coord1, coord2, tolerance = 0.0001) => {
+  return (
+    Math.abs(coord1.lat - coord2.lat) <= tolerance &&
+    Math.abs(coord1.lng - coord2.lng) <= tolerance
+  );
+};
+
+export const checkPathThroughMarkers = (routeResponse, markers) => {
+  const markersAlongPath = [];
+  if (routeResponse && routeResponse.overview_path && markers) {
+    const path = routeResponse.overview_path;
+
+    path.forEach((coord) => {
+      markers.forEach((marker) => {
+        if (areCoordinatesEqual(coord.toJSON(), marker.position)) {
+          markersAlongPath.push(marker);
+        }
+      });
+    });
+
+    markersAlongPath.forEach((marker) => {
+      if (marker.type === "safety") {
+        safetyScore += marker.content.overall;
+        safetyCount += 1;
+      } else if (marker.type === "crime") crimeCount += 1;
+      else trafficCount += 1;
+    });
+    let averageSafetyScore = "No Info";
+    if (safetyCount > 0) averageSafetyScore = safetyScore / safetyCount;
+    return { averageSafetyScore, trafficCount, crimeCount };
+  }
+  let safetyScore = 0;
+  let safetyCount = 0;
+  let trafficCount = 0;
+  let crimeCount = 0;
+  if (markersAlongPath.length > 0) {
+    markersAlongPath.forEach((marker) => {
+      if (marker.type === "safety") {
+        safetyScore += marker.content.overall;
+        safetyCount += 1;
+      } else if (marker.type === "crime") crimeCount += 1;
+      else trafficCount += 1;
+    });
+  }
+  let averageSafetyScore = "No Info";
+  if (safetyCount > 0) averageSafetyScore = safetyScore / safetyCount;
+  return { averageSafetyScore, trafficCount, crimeCount };
+};
