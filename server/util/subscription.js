@@ -47,6 +47,11 @@ async function getSubscriptionById(userId) {
 	}
 	return subscription;
 }
+
+// getSubscription()
+// 	.then((re) => console.log(re))
+// 	.catch((e) => console.log(e));
+
 exports.createSubscription = createSubscription;
 exports.getSubscription = getSubscription;
 exports.getSubscriptionById = getSubscriptionById;
