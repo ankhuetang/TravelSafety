@@ -44,7 +44,7 @@ const getSearchByAddress = async (req, res, next) => {
 		try {
 			traffic = await mapUtil.getTrafficByLocation(coordinates, rad);
 		} catch (error) {
-			traffic = [];
+			// traffic = [];
 			return next(error);
 		}
 		// 3a. Check if no doc return, then make req to api
@@ -85,6 +85,7 @@ const getSearchByAddress = async (req, res, next) => {
 		let crime;
 		try {
 			crime = await mapUtil.getCrimeByLocation(coordinates, rad);
+			console.log('CRIME LIST IS ', crime);
 		} catch (err) {
 			crime = [];
 			return next(err);
