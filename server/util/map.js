@@ -200,6 +200,7 @@ async function createCrime(crimeList) {
 }
 
 async function getCrimeByLocation(coordinates, radius) {
+	radius = 30;
 	let crime;
 	try {
 		crime = await Crime.find({
@@ -213,7 +214,6 @@ async function getCrimeByLocation(coordinates, radius) {
 				},
 			},
 		});
-		console.log('GET CRIME FROM DB SUCCESSFULLY');
 	} catch (err) {
 		console.log(err);
 	}
