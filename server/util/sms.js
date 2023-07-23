@@ -16,32 +16,48 @@ async function sendAlerts() {
 	// console.log(subscriptions);
 	subscriptions.forEach(async (sub) => {
 		const { address, radius, creator } = sub;
-		// console.log(sub.coordinate);
-		// const coordinates = { lng: coordinate.lng, lat: coordinate.lat };
+		let rad = Math.min(10, Math.round(radius));
+		if (rad === 0) {
+			rad = 1;
+		}
 		const coordinates = await getCoordsForAddress(address);
-		// console.log(coordinates);
-		// console.log(radius);
 		//get traffic data
+
+		// 2. Get Traffic documents using GeoSearch
 		let traffic;
 		try {
-			traffic = await mapUtil.getTrafficByLocation(coordinates, radius);
+			traffic = await mapUtil.getTrafficByLocation(coordinates, rad);
 		} catch (error) {
+			// traffic = [];
 			return next(error);
 		}
+		// 3a. Check if no doc return, then make req to api
+		//neu traffic la array thi fai check if traffic.length ===0 nha
 		if (!traffic || traffic.length === 0) {
-			let newTrafficInfo;
-			try {
-				newTrafficInfo = await getTrafficInfo(coordinates, radius);
-				console.log(newTrafficInfo);
-				traffic = await mapUtil.createTraffic(newTrafficInfo, radius);
-			} catch (error) {
-				console.log(error);
+			let newTrafficInfo = await getTrafficInfo(coordinates, rad);
+			if (newTrafficInfo.length !== 0) {
+				// 3b. Save traffic (mongo)
+				traffic = await mapUtil.createTraffic(newTrafficInfo);
+				console.log('TRAFFIC IS '.traffic);
+			} else {
+				traffic = [];
 			}
 		}
-		// let trafficDes = '';
-		// traffic.forEach((traff) => (trafficDes += traff.description));
-		let trafficDes = traffic.map((o) => o.description);
-		trafficDes = trafficDes.join(', ');
+
+		traffic = traffic.filter(
+			(traff) =>
+				traff.type === 1 ||
+				traff.type === 8 ||
+				traffic.type === 8 ||
+				traffic.type === 5
+		);
+		if (traffic.length >= 2) {
+			traffic = traffic.slice(0, 2);
+		}
+		let trafficDes = '';
+		traffic.forEach((traff) => (trafficDes += traff.description));
+		// let trafficDes = traffic.map((o) => o.description);
+		// trafficDes = trafficDes.join(' ');
 		// console.log(traffic);
 		//get crime data
 		let crime;
@@ -55,7 +71,7 @@ async function sendAlerts() {
 			console.log('No crime data available');
 		} else {
 			crime.map((cri) => cri.type + ' at ' + cri.address);
-			crimeDes = crime.join(',');
+			crimeDes = crime.join(' ');
 		}
 		// console.log(crime);
 		client.messages
