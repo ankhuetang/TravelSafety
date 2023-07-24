@@ -25,3 +25,4 @@ subscriptionSchema.pre('save', function (next) {
 	next();
 
 module.exports = mongoose.model('Subscription', subscriptionSchema);
+})
