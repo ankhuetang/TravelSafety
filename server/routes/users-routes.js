@@ -34,7 +34,7 @@ router.get('/data', auth, async (req, res) => {
 	try {
 		// console.log('HELLUUUUU');
 		const user = await User.findById(req.user).select('-password');
-		console.log('USER IS ', user);
+		// console.log('USER IS ', user);
 		res.json(user); // trong user co userID
 	} catch (err) {
 		console.error(err.message);

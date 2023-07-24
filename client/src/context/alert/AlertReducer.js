@@ -6,6 +6,8 @@ import {
   ALERT_ERROR,
   GET_ALERTS,
   CLEAR_ALERTS,
+  SORT_ALERTS,
+  CLEAR_SORT,
 } from "../types";
 
 export default (state, action) => {
@@ -48,6 +50,16 @@ export default (state, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+    case SORT_ALERTS:
+      return {
+        ...state,
+        sorted: action.payload,
+      };
+    case CLEAR_SORT:
+      return {
+        ...state,
+        sorted: null,
       };
     default:
       return state;

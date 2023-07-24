@@ -1,14 +1,14 @@
 const subUtil = require('../util/subscription');
 
 const getSubscription = async (req, res, next) => {
-	console.log('getSubscription called with req.user:', req.user);
+	// console.log('getSubscription called with req.user:', req.user);
 	const userId = req.user;
 	// console.log('userId is:', userId);
 
 	let subscription;
 	try {
 		subscription = await subUtil.getSubscriptionById(userId);
-		console.log('subscriptions: ', subscription);
+		// console.log('subscriptions: ', subscription);
 	} catch (error) {
 		console.log('There is an error in getSubscription');
 		console.error(error);
@@ -23,7 +23,7 @@ const getSubscription = async (req, res, next) => {
 // private
 // add them userID vao destructor
 const subscribe = async (req, res, next) => {
-	const { location: address, radius, duration } = req.body;
+	const { location: address, radius, duration, coordinate } = req.body;
 	// console.log(req.user);
 	// console.log(req.user.id);
 	const userID = req.user;
@@ -35,7 +35,8 @@ const subscribe = async (req, res, next) => {
 			address,
 			radius,
 			duration,
-			userID
+			userID,
+			coordinate
 		);
 		console.log('created subscription: ', subscription);
 	} catch (error) {

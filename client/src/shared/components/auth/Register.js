@@ -32,8 +32,8 @@ const Register = () => {
       console.log("User is authenticated. Rendering profile page");
       navigate("/profile");
     }
-    console.log("error message:", error);
     if (error !== null) {
+      // console.log("Register component is raising error:", error);
       setWarning(error, "danger");
       clearErrors();
     }
@@ -118,7 +118,7 @@ const Register = () => {
                 </FormControl>
               ))}
               <Button type="submit" fullWidth>
-                Sign in
+                Sign up
               </Button>
             </form>
           </Box>

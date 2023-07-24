@@ -3,7 +3,7 @@ import AlertContext from "../../../context/alert/AlertContext";
 import { Input } from "@mui/joy";
 const AlertFilter = () => {
   const alertContext = useContext(AlertContext);
-  const { filterAlerts, clearFilter, filtered } = alertContext;
+  const { filterAlerts, clearFilter, filtered, clearSort } = alertContext;
   const text = useRef("");
 
   useEffect(() => {
@@ -19,6 +19,8 @@ const AlertFilter = () => {
     // console.log("Current text:", text.current.value);
     text.current.value = e.target.value;
     if (text.current.value !== "") {
+      // WIP code
+      clearSort();
       filterAlerts(e.target.value);
     } else {
       clearFilter();
