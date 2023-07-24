@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 //consider adding index for querying
 
 const safetySchema = new Schema({
-	name: { type: String, required: true },
+	name: { type: String, required: true, unique: true },
 	subType: { type: String, required: true },
 	location: {
 		type: { type: String, default: 'Point' },
@@ -14,7 +14,6 @@ const safetySchema = new Schema({
 			type: [Number],
 			required: true,
 			index: '2dsphere',
-			// unique: true,
 		},
 	},
 	safetyScore: {
@@ -26,10 +25,11 @@ const safetySchema = new Schema({
 		theft: { type: Number, required: true },
 		women: { type: Number, required: false },
 	},
-	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a crime document belongs to only 1 place
+	expiredAt: { type: Date, index: { expires: '30d' } },
 });
-// Create a geospatial index on the location field
 safetySchema.index({ location: '2dsphere' });
+safetySchema.index({ expiredAt: 1 }, { expireAfterSeconds: 0 });
+safetySchema.plugin(uniqueValidator);
 // Expire lau hon (crime data lau outdated)
 
 module.exports = mongoose.model('Safety', safetySchema);

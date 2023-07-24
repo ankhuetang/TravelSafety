@@ -36,17 +36,22 @@ function MapContainer() {
   const prevMarkersRef = useRef([]);
   const prevRouteResponseRef = useRef(null);
   const [loadedMarkers, setLoadedMarkers] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   const onLoad = useCallback((map) => {
     setMap(map);
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       if (
-        US_BOUNDS.north >= latitude >= US_BOUNDS.south &&
-        US_BOUNDS.west <= longitude <= US_BOUNDS.east
-      )
+        US_BOUNDS.north >= latitude &&
+        latitude >= US_BOUNDS.south &&
+        US_BOUNDS.west <= longitude &&
+        longitude <= US_BOUNDS.east
+      ) {
         map.setCenter({ lat: latitude, lng: longitude });
-      else alert("Your current location is not in the US");
+      } else {
+        alert("Your current location is not in the US");
+      }
     });
     const directionsService = new window.google.maps.DirectionsService();
     const directionsRenderer = new window.google.maps.DirectionsRenderer({
@@ -121,8 +126,7 @@ function MapContainer() {
           "http://localhost:8000/api/map/data",
           data
         );
-        console.log(response);
-        console.log(response.data);
+        console.log("response data", response.data);
         if (response.data) {
           console.log(response.data);
           const { newMarkers } = await makeMarkers(response.data);
@@ -141,6 +145,7 @@ function MapContainer() {
       }
     };
     requestData.map((data) => setTimeout(() => fetchData(data), 200));
+    if (map) setCurrentLocation(map.getCenter().toJSON());
   }, [requestData]);
 
   const handleDragOrZoom = () => {
@@ -189,6 +194,7 @@ function MapContainer() {
             onDragEnd={handleDragOrZoom}
             onIdle={handleDragOrZoom}
           >
+            {currentLocation && <Marker position={currentLocation} />}
             {markers &&
               markers.map((marker) => (
                 <Marker

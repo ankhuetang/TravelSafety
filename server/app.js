@@ -6,6 +6,10 @@ const mongoose = require('mongoose');
 
 const mapRoutes = require('./routes/map-routes');
 const userRoutes = require('./routes/users-routes');
+const { sendSMS } = require('./util/sms');
+// const sendAlerts = require('./util/sms');
+
+const { scheduleScrape } = require('../server/util/webscraping/scheduleScrape');
 
 const app = express();
 app.use(cors());
@@ -25,15 +29,16 @@ app.use(bodyParser.json());
 app.use('/api/map', mapRoutes);
 app.use('/api/user', userRoutes);
 
-// const mongoURI = process.env.MONGO_URI;
-const mongoURI =
-	'mongodb+srv://ktang:Ankhuetang_03@cluster0.4cvsvhx.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGO_URI;
 
 mongoose
 	.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => {
 		app.listen(8000);
 		console.log('connected to DB');
+		// sendAlerts();
+		sendSMS();
+		// scheduleScrape();
 	})
 	.catch((err) => {
 		console.log(err);

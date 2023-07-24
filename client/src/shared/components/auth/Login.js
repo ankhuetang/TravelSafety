@@ -25,14 +25,15 @@ const Login = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
+    console.log(authContext);
     // props.history.push() is deprecated!!! Use Navigate from react-router-dom instead
     if (isAuthenticated) {
       console.log("User is authenticated. Rendering profile page");
       // <Navigate to='/' />; // ???
       navigate("/profile");
     }
-    console.log("error message:", error);
     if (error !== null) {
+      // console.log("Login component is raising error:", error);
       // Kiem tra xem error message o backend co giong khong
       setWarning(error, "danger");
       clearErrors();

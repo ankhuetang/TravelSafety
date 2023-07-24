@@ -182,17 +182,14 @@ async function createCrime(crimeList) {
 		const createdCrime = new Crime({
 			type: crime.type,
 			address: crime.address,
-			date: crime.date,
+			date: new Date(crime.date),
 			location: {
-				coordinates: [crime.location.longtitude, crime.location.latitude],
+				coordinates: [crime.location.longitude, crime.location.latitude],
 			},
 		});
 
 		try {
-			const sess = await mongoose.startSession();
-			sess.startTransaction();
-			await createdCrime.save({ session: sess });
-			await sess.commitTransaction();
+			await createdCrime.save();
 			createdCrimes.push(createdCrime);
 		} catch (err) {
 			console.log(err);
@@ -203,6 +200,7 @@ async function createCrime(crimeList) {
 }
 
 async function getCrimeByLocation(coordinates, radius) {
+	radius = 30;
 	let crime;
 	try {
 		crime = await Crime.find({
@@ -221,6 +219,17 @@ async function getCrimeByLocation(coordinates, radius) {
 	}
 	return crime; //return list of crimes
 }
+// const coordinates = {
+// 	lng: -71.4269316,
+// 	lat: 41.8235906,
+// };
+// getCrimeByLocation(coordinates, 2)
+// 	.then((res) => {
+// 		console.log(res);
+// 	})
+// 	.catch((err) => {
+// 		console.log('ERRORR ', err);
+// 	});
 
 //getPlacesByUserId
 async function getPlacesByUserId(userId) {
