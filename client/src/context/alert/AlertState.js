@@ -10,6 +10,8 @@ import {
   CLEAR_FILTER,
   ALERT_ERROR,
   CLEAR_ALERTS,
+  SORT_ALERTS,
+  CLEAR_SORT,
 } from "../types";
 import axios from "axios";
 
@@ -18,6 +20,7 @@ const AlertState = (props) => {
     alerts: [],
     filtered: null,
     error: null,
+    sorted: null,
   };
 
   const [state, dispatch] = useReducer(alertReducer, initialState);
@@ -27,13 +30,12 @@ const AlertState = (props) => {
     console.log("getAlerts called");
     try {
       const res = await axios.get("http://localhost:8000/api/map/profile");
-      console.log("res.data is: ", res.data);
+      // console.log("res.data is: ", res.data);
       const { Subscription } = res.data;
-      console.log(Subscription);
+      // console.log(Subscription);
       dispatch({ type: GET_ALERTS, payload: Subscription });
     } catch (error) {
-      console.log("There is an error!");
-      console.log(error);
+      console.log("Get alerts raised error:", error);
       dispatch({ type: ALERT_ERROR, payload: error.response.msg }); // Change this!!!
     }
   };
@@ -54,16 +56,16 @@ const AlertState = (props) => {
         alert,
         config
       );
-      console.log("res is: ", res);
-      // WIP code
-      // const user_id = await axios.post("http://localhost:8000/api/user/data");
-      // console.log("user_id is: ", user_id);
+      // console.log("res is: ", res);
       const obj = {
         _id: res.data.Subscription._id,
         address: res.data.Subscription.address,
         duration: res.data.Subscription.duration,
         radius: res.data.Subscription.radius,
+        coordinate: res.data.Subscription.coordinate,
+        createAt: res.data.Subscription.createAt,
       };
+      console.log("object sending to reducer:", obj);
       dispatch({ type: ADD_ALERT, payload: obj });
     } catch (error) {
       console.log("There is an error!");
@@ -78,11 +80,20 @@ const AlertState = (props) => {
 
   // Filter alerts
   const filterAlerts = (text) => {
+    console.log("filterAlerts called with text:", text);
     dispatch({ type: FILTER_ALERTS, payload: text });
   };
   // Clear filter
   const clearFilter = () => {
     dispatch({ type: CLEAR_FILTER });
+  };
+  // Sort alerts
+  const sortAlerts = (alerts) => {
+    dispatch({ type: SORT_ALERTS, payload: alerts });
+  };
+  // Clear sort
+  const clearSort = () => {
+    dispatch({ type: CLEAR_SORT });
   };
 
   return (
@@ -90,11 +101,14 @@ const AlertState = (props) => {
       value={{
         alerts: state.alerts,
         filtered: state.filtered,
+        sorted: state.sorted,
         getAlerts,
         addAlert,
         clearAlerts,
         filterAlerts,
         clearFilter,
+        sortAlerts,
+        clearSort,
       }}
     >
       {props.children}

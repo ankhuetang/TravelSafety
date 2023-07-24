@@ -42,7 +42,7 @@ function MapContainer() {
     });
   });
   useEffect(() => {
-    console.log("trigger useEffect", requestData);
+    // console.log("trigger useEffect", requestData);
     const fetchData = async (data) => {
       try {
         const response = await axios.post(
