@@ -23,11 +23,26 @@ export const formSide = {
   backgroundColor: "rgba(255 255 255 / 0.6)",
 };
 
+// export const alertSide = {
+//   zIndex: 1,
+//   display: "flex",
+//   backdropFilter: "blur(4px)",
+//   backgroundColor: "rgba(255 255 255 / 0.6)",
+//   position: "fixed",
+//   right: 0,
+//   top: 0,
+//   bottom: 0,
+//   left: "clamp(0px, (100vw - var(--Collapsed-breakpoint)) * 999, 100vw - var(--Cover-width))",
+//   transition:
+//     "width var(--Transition-duration), left var(--Transition-duration) !important",
+//   transitionDelay: "calc(var(--Transition-duration) + 0.1s)",
+// };
+
 export const alertSide = {
   zIndex: 1,
   display: "flex",
   backdropFilter: "blur(4px)",
-  backgroundColor: "rgba(255 255 255 / 0.6)",
+  backgroundColor: "rgba(255, 255, 255, 0.6)",
   position: "fixed",
   right: 0,
   top: 0,
@@ -36,6 +51,7 @@ export const alertSide = {
   transition:
     "width var(--Transition-duration), left var(--Transition-duration) !important",
   transitionDelay: "calc(var(--Transition-duration) + 0.1s)",
+  overflowY: "auto", // Enable vertical scrolling
 };
 
 export const formContainer = {
@@ -86,3 +102,7 @@ export const imageSide = {
   backgroundImage:
     "url(https://images.unsplash.com/photo-1478860409698-8707f313ee8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=4000&q=80)",
 };
+
+// export const sort = {
+//   backgroundColor: "rgba(0 0 0 / 0.6)",
+// };

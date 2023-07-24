@@ -63,7 +63,7 @@ export function makeMarkers(responseData) {
     markers.push(newMarker);
     viewport.extend(position);
   });
-  console.log(markers);
+  // console.log(markers);
   return { markers, viewport };
 }
 
@@ -79,7 +79,7 @@ function calculateRadius(origin, bounds) {
       lat: bounds.north,
       lng: origin.lng,
     }) / 1000;
-  console.log("calculate radius", width, height);
+  // console.log("calculate radius", width, height);
   let center, horizontal, vertical, diagonal;
   const val = 20;
   if (width <= val && height <= val) center = Math.max(width, height);
@@ -123,7 +123,7 @@ function findCoordinates(radius, origin) {
       areas.push({ coordinates: coordinates, radius: diagonal })
     );
   }
-  console.log("find areas", areas);
+  // console.log("find areas", areas);
   return areas;
 }
 export function makeRequestData(center, bounds) {

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Autocomplete, LoadScript } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
 import AlertContext from "../../../context/alert/AlertContext";
 import {
   Box,
@@ -20,9 +20,10 @@ const AlertForm = () => {
     location: "",
     duration: "",
     radius: "",
+    coordinate: null,
   });
-  const { location, duration, radius } = alert;
-  const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+  const { location, duration, radius, coordinate } = alert;
+  // const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -35,100 +36,97 @@ const AlertForm = () => {
       location: "",
       duration: "",
       radius: "",
+      coordinate: null,
     });
   };
 
   const onLoad = (autocomplete) => {
-    // setAlert({ ...alert, autocompleteObject: autocomplete });
+    // Initialize Autocomplete
     setAutocompleteObject(autocomplete);
     // console.log(alert);
   };
 
   const onChange = (event) => {
+    console.log("setting alert");
     setAlert({
       ...alert,
       [event.target.name]: event.target.value,
     });
+    // console.log("alert is now:", alert);
   };
 
-  // Code copied from ChatGPT lol --> Solves the problem
   const onPlaceChanged = (e) => {
+    console.log("onPlaceChanged called");
     if (autocompleteObject !== null) {
       const place = autocompleteObject.getPlace();
+      console.log("autocompleteObject is:", place);
+      const coordinateObject = place.geometry.location;
       const formattedAddress = place.formatted_address;
-      setAlert({ ...alert, location: formattedAddress });
+      setAlert({
+        ...alert,
+        location: formattedAddress,
+        coordinate: coordinateObject,
+      });
+      console.log("alert is:", alert);
     } else {
       console.log("Autocomplete is still loading or invalid");
     }
   };
 
-  // const onPlaceChanged = (e) => {
-  //   if (autocompleteObject !== null) {
-  //     // location is an Object with function getPlace() will return an OBJECT, which CANNOT be rendered as a React child
-  //     const place = autocompleteObject.getPlace();
-  //     console.log(place);
-  //     const formattedAddress = place.formatted_address; // get the string value of the location
-  //     console.log("The formatted address is: ", formattedAddress);
-  //     setAlert({ ...alert, location: formattedAddress });
-  //   } else {
-  //     console.log("Autocomplete is not loaded yet");
-  //   }
-  // };
-
   const formIsValid = location !== null && duration !== "" && radius !== "";
 
   return (
-    <LoadScript googleMapsApiKey={API_KEY} libraries={["places"]}>
-      <Box component="main" sx={form}>
-        <div>
-          <Typography component="h1" fontSize="xl2" fontWeight="lg">
-            Add Alert
-          </Typography>
-          <Typography level="body2" sx={{ my: 1, mb: 3 }}>
-            Specify a location to receive daily alerts via message
-          </Typography>
-        </div>
-        <form onSubmit={onSubmit}>
-          <FormControl required>
-            <FormLabel> Location</FormLabel>
-            <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-              <Input placeholder="Enter location" />
-            </Autocomplete>
-          </FormControl>
-          <FormControl required>
-            <FormLabel>Duration (in days)</FormLabel>
-            <Input
-              type="number"
-              min={1}
-              name="duration"
-              value={duration}
-              onChange={onChange}
-            />
-          </FormControl>
-          <FormControl required>
-            <FormLabel>Radius (in miles)</FormLabel>
-            <Input
-              type="number"
-              min={1}
-              name="radius"
-              value={radius}
-              onChange={onChange}
-            />
-          </FormControl>
-          {formIsValid ? (
+    // <LoadScript googleMapsApiKey={API_KEY} libraries={["places"]}>
+    <Box component="main" sx={form}>
+      <div>
+        <Typography component="h1" fontSize="xl2" fontWeight="lg">
+          Add Alert
+        </Typography>
+        <Typography level="body2" sx={{ my: 1, mb: 3 }}>
+          Specify a location to receive daily alerts via message
+        </Typography>
+      </div>
+      <form onSubmit={onSubmit}>
+        <FormControl required>
+          <FormLabel> Location</FormLabel>
+          <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+            <Input placeholder="Enter location" />
+          </Autocomplete>
+        </FormControl>
+        <FormControl required>
+          <FormLabel>Duration (in days)</FormLabel>
+          <Input
+            type="number"
+            min={1}
+            name="duration"
+            value={duration}
+            onChange={onChange}
+          />
+        </FormControl>
+        <FormControl required>
+          <FormLabel>Radius (in miles)</FormLabel>
+          <Input
+            type="number"
+            min={1}
+            name="radius"
+            value={radius}
+            onChange={onChange}
+          />
+        </FormControl>
+        {formIsValid ? (
+          <Button type="submit" fullWidth>
+            Subscribe
+          </Button>
+        ) : (
+          <fieldset disabled>
             <Button type="submit" fullWidth>
               Subscribe
             </Button>
-          ) : (
-            <fieldset disabled>
-              <Button type="submit" fullWidth>
-                Subscribe
-              </Button>
-            </fieldset>
-          )}
-        </form>
-      </Box>
-    </LoadScript>
+          </fieldset>
+        )}
+      </form>
+    </Box>
+    // </LoadScript>
   );
 };
 

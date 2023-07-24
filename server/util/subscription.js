@@ -2,14 +2,23 @@ const mongoose = require('mongoose');
 const Subscription = require('../models/subscription');
 
 // createSubscription
-async function createSubscription(address, radius, duration, userID) {
+async function createSubscription(
+	address,
+	radius,
+	duration,
+	userID,
+	coordinate
+) {
+	const createDate = new Date(Date.now());
 	const expireDate = new Date(Date.now() + duration * 24 * 60 * 60 * 1000); // duration in ms
 	const createdSubscription = new Subscription({
 		address: address,
 		radius: radius,
 		duration: duration,
+		createAt: createDate,
 		expireAt: expireDate, // duration in second
 		creator: userID,
+		coordinate: coordinate,
 	});
 
 	try {
@@ -36,7 +45,7 @@ async function getSubscription() {
 
 // Get subscription by id
 async function getSubscriptionById(userId) {
-	console.log('getSubscriptionById called with userID:', userId);
+	// console.log('getSubscriptionById called with userID:', userId);
 	let subscription;
 	try {
 		subscription = await Subscription.find({ creator: userId });
@@ -47,6 +56,11 @@ async function getSubscriptionById(userId) {
 	}
 	return subscription;
 }
+
+// getSubscription()
+// 	.then((re) => console.log(re))
+// 	.catch((e) => console.log(e));
+
 exports.createSubscription = createSubscription;
 exports.getSubscription = getSubscription;
 exports.getSubscriptionById = getSubscriptionById;

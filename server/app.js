@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 
 const mapRoutes = require('./routes/map-routes');
 const userRoutes = require('./routes/users-routes');
+const { sendSMS } = require('./util/sms');
+// const sendAlerts = require('./util/sms');
 
 const { scheduleScrape } = require('../server/util/webscraping/scheduleScrape');
 
@@ -34,7 +36,9 @@ mongoose
 	.then(() => {
 		app.listen(8000);
 		console.log('connected to DB');
-		//scheduleScrape();
+		// sendAlerts();
+		sendSMS();
+		// scheduleScrape();
 	})
 	.catch((err) => {
 		console.log(err);

@@ -13,8 +13,8 @@ import { LocationOn } from "@mui/icons-material";
 const AlertItem = ({ alert }) => {
   // Destructure field address inside alert, rename it to location
   const { address: location, duration, radius } = alert;
-  console.log("AlertItem component called");
-  console.log("AlertItem is", alert);
+  // console.log("AlertItem component called");
+  // console.log("AlertItem is", alert);
   // console.log(location);
 
   return (
@@ -31,7 +31,13 @@ const AlertItem = ({ alert }) => {
         }}
       >
         <CardContent>
-          <Typography level="h2" fontSize="lg" id="card-description" mb={0.5} sx={{py:1}}>
+          <Typography
+            level="h2"
+            fontSize="lg"
+            id="card-description"
+            mb={0.5}
+            sx={{ py: 1 }}
+          >
             <ListItemDecorator>
               <LocationOn />
             </ListItemDecorator>{" "}
