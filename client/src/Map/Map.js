@@ -211,10 +211,10 @@ function MapContainer() {
               <InfoWindow position={selectedMarker.position}>
                 {selectedMarker.type === "safety" ? (
                   <SafetyInfoWindow card={selectedMarker} />
-                ) : selectedMarker.type === "traffic" ? (
-                  <TrafficInfoWindow card={selectedMarker} />
-                ) : (
+                ) : selectedMarker.type === "crime" ? (
                   <CrimeInfoWindow card={selectedMarker} />
+                ) : (
+                  <TrafficInfoWindow card={selectedMarker} />
                 )}
               </InfoWindow>
             )}
