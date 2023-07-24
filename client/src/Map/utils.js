@@ -93,7 +93,6 @@ export function makeMarkers(responseData) {
     newMarkers.push(newMarker);
     viewport.extend(position);
   });
-  console.log(newMarkers);
   return { newMarkers, viewport };
 }
 
@@ -180,7 +179,8 @@ export function makeRequestData(center, bounds) {
   return requestData;
 }
 
-const areCoordinatesEqual = (coord1, coord2, tolerance = 0.0001) => {
+const areCoordinatesEqual = (coord1, coord2, tolerance = 0.001) => {
+  console.log(coord1, coord2)
   return (
     Math.abs(coord1.lat - coord2.lat) <= tolerance &&
     Math.abs(coord1.lng - coord2.lng) <= tolerance
@@ -189,33 +189,19 @@ const areCoordinatesEqual = (coord1, coord2, tolerance = 0.0001) => {
 
 export const checkPathThroughMarkers = (routeResponse, markers) => {
   const markersAlongPath = [];
-  if (routeResponse && routeResponse.overview_path && markers) {
-    const path = routeResponse.overview_path;
-
-    path.forEach((coord) => {
-      markers.forEach((marker) => {
-        if (areCoordinatesEqual(coord.toJSON(), marker.position)) {
-          markersAlongPath.push(marker);
-        }
-      });
-    });
-
-    markersAlongPath.forEach((marker) => {
-      if (marker.type === "safety") {
-        safetyScore += marker.content.overall;
-        safetyCount += 1;
-      } else if (marker.type === "crime") crimeCount += 1;
-      else trafficCount += 1;
-    });
-    let averageSafetyScore = "No Info";
-    if (safetyCount > 0) averageSafetyScore = safetyScore / safetyCount;
-    return { averageSafetyScore, trafficCount, crimeCount };
-  }
   let safetyScore = 0;
   let safetyCount = 0;
   let trafficCount = 0;
   let crimeCount = 0;
-  if (markersAlongPath.length > 0) {
+  let averageSafetyScore = "No Info";
+  if (routeResponse && routeResponse.overview_path && markers) {
+    const path = routeResponse.overview_path;
+    path.forEach((coord) => {
+      markers.forEach((marker) => {
+        console.log("check the second latlng")
+        if (areCoordinatesEqual(coord.toJSON(), marker.position))  markersAlongPath.push(marker);
+      });
+    });
     markersAlongPath.forEach((marker) => {
       if (marker.type === "safety") {
         safetyScore += marker.content.overall;
@@ -223,8 +209,8 @@ export const checkPathThroughMarkers = (routeResponse, markers) => {
       } else if (marker.type === "crime") crimeCount += 1;
       else trafficCount += 1;
     });
+    if (safetyCount > 0) averageSafetyScore = safetyScore / safetyCount;
   }
-  let averageSafetyScore = "No Info";
-  if (safetyCount > 0) averageSafetyScore = safetyScore / safetyCount;
+  console.log("checkpoint 2",averageSafetyScore, trafficCount, crimeCount )
   return { averageSafetyScore, trafficCount, crimeCount };
 };

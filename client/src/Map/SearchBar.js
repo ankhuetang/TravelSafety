@@ -6,14 +6,12 @@ import { Paper, InputBase, Divider, IconButton } from "@mui/material";
 import DirectionsIcon from "@mui/icons-material/Directions";
 const SearchBar = ({ setRequestData, setViewport, setSearched, handleShowSearchRouteBar }) => {
   const searchInput = useRef();
-  console.log("helluuu searchInput is ", searchInput);
   const handlePlacesChanged = () => {
     const place = searchInput.current.getPlaces();
     //must use try catch block
     try {
       const center = place[0].geometry.location.toJSON();
       const bounds = place[0].geometry.viewport.toJSON();
-      console.log("place is ", place);
       const addressData = makeRequestData(center, bounds);
       setRequestData(addressData);
       const viewport = new window.google.maps.LatLngBounds();

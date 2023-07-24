@@ -17,6 +17,7 @@ export default function SearchRouteBar({
   setTravelMode,
   route,
   handleShowSearchRouteBar,
+  routeInfo
 }) {
   const [address, setAddress] = useState({});
   const [inputs, setInputs] = useState([
@@ -41,7 +42,6 @@ export default function SearchRouteBar({
       }
     });
     const destination = furthestDestination.input;
-    // Handle duplicates and set origin at index 0 and destination at the final index
     const uniqueInputs = [];
     uniqueInputs.push(inputs[0]);
     const destinationIndex = inputs.findIndex(
@@ -233,7 +233,7 @@ export default function SearchRouteBar({
           Find an optimal path
         </Typography>
       </Stack>
-      {route && <RouteResult route={route} />}
+      {route && <RouteResult route={route} routeInfo={routeInfo} />}
     </Paper>
   );
 }

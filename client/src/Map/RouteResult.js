@@ -19,6 +19,7 @@ import DirectionsIcon from "@mui/icons-material/Directions";
 import theme from "../shared/theme";
 
 export default function RouteResult({ route, routeInfo }) {
+  console.log("checkpoint 4", routeInfo)
   return (
     <CssVarsProvider defaultMode="light" theme={theme}>
       <CssBaseline />
@@ -120,7 +121,7 @@ export default function RouteResult({ route, routeInfo }) {
             size="sm"
             sx={{ borderRadius: "sm" }}
           >
-            Average Safety Score: {routeInfo.averageSafetyScore}
+            Average Safety Score: {routeInfo?.averageSafetyScore}
           </Chip>
           <Chip
             variant="outlined"
@@ -128,7 +129,7 @@ export default function RouteResult({ route, routeInfo }) {
             size="sm"
             sx={{ borderRadius: "sm" }}
           >
-            {routeInfo.trafficCount} Traffic Markers
+            {routeInfo?.trafficCount} Traffic Incidents
           </Chip>
           <Chip
             variant="outlined"
@@ -136,7 +137,7 @@ export default function RouteResult({ route, routeInfo }) {
             size="sm"
             sx={{ borderRadius: "sm" }}
           >
-            {routeInfo.crimeCount} Crime Markers
+            {routeInfo?.crimeCount} Crimes Found
           </Chip>
         </Box>
       </Sheet>

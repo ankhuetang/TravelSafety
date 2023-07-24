@@ -9,6 +9,7 @@ import SearchBar from "./SearchBar.js";
 import "./Map.css";
 import SafetyInfoWindow from "./InfoWindow/SafetyInfoWindow.js";
 import TrafficInfoWindow from "./InfoWindow/TrafficInfoWindow.js";
+import CrimeInfoWindow from "./InfoWindow/CrimInfoWindow.js";
 import axios from "axios";
 import {
   makeMarkers,
@@ -32,10 +33,13 @@ function MapContainer() {
   const [directionsAPI, setDirectionsAPI] = useState({});
   const [travelMode, setTravelMode] = useState("");
   const [routeResponse, setRouteResponse] = useState(null);
-  const [routeInfo, setRouteInfo] = useState(null);
+  const [routeInfo, setRouteInfo] = useState({
+    averageSafetyScore: 0,
+    trafficCount: 0,
+    crimeCount: 0,
+  });
   const prevMarkersRef = useRef([]);
   const prevRouteResponseRef = useRef(null);
-  const [loadedMarkers, setLoadedMarkers] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
 
   const onLoad = useCallback((map) => {
@@ -63,14 +67,6 @@ function MapContainer() {
     });
   });
 
-  const onLoadMarker = useCallback((marker) => {
-    //   loadedMarkers.forEach((marker) => {
-    //     if (!markers.includes(marker.position.toString())) {
-    //       setMarkers((prevMarkers) => [...prevMarkers, marker]);
-    //     }
-    //   setLoadedMarkers((prevMarkers) => [...prevMarkers, marker])
-    //  console.log(loadedMarkers)
-  });
   useEffect(() => {
     if (map && routes) {
       let waypoints = [];
@@ -102,9 +98,7 @@ function MapContainer() {
   }, [routes]);
 
   useEffect(() => {
-    const prevMarkers = prevMarkersRef.current;
-    const prevRouteResponse = prevRouteResponseRef.current;
-    if (markers !== prevMarkers || routeResponse !== prevRouteResponse) {
+    if (markers && routeResponse) {
       const { averageSafetyScore, trafficCount, crimeCount } =
         checkPathThroughMarkers(routeResponse, markers);
       setRouteInfo({
@@ -112,9 +106,9 @@ function MapContainer() {
         trafficCount: trafficCount,
         crimeCount: crimeCount,
       });
+      console.log("checkpoint 1", averageSafetyScore, trafficCount, crimeCount);
+      console.log("checkpoint 3", routeInfo);
     }
-    prevMarkersRef.current = markers;
-    prevRouteResponseRef.current = routeResponse;
   }, [markers, routeResponse]);
 
   useEffect(() => {
@@ -128,18 +122,22 @@ function MapContainer() {
         );
         console.log("response data", response.data);
         if (response.data) {
-          console.log(response.data);
           const { newMarkers } = await makeMarkers(response.data);
-          newMarkers.forEach((marker) => {
+          console.log("new markers", newMarkers);
+          newMarkers.forEach((newMarker) => {
             if (
               !markers.some(
-                (m) => m.position.toString() === marker.position.toString()
+                (marker) =>
+                  marker.position.lat === newMarker.position.lat &&
+                  marker.position.lng === newMarker.position.lng
               )
             ) {
-              setMarkers((prevMarkers) => [...prevMarkers, marker]);
+              console.log("Adding new marker:", newMarker);
+              setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
             }
           });
         }
+        console.log("markers", markers);
       } catch (error) {
         console.log(error);
       }
@@ -207,15 +205,16 @@ function MapContainer() {
                         .OPTIONAL_AND_HIDES_LOWER_PRIORITY,
                     animation: window.google.maps.Animation.DROP,
                   }}
-                  onLoad={onLoadMarker}
                 />
               ))}
             {selectedMarker && (
               <InfoWindow position={selectedMarker.position}>
                 {selectedMarker.type === "safety" ? (
                   <SafetyInfoWindow card={selectedMarker} />
-                ) : (
+                ) : selectedMarker.type === "traffic" ? (
                   <TrafficInfoWindow card={selectedMarker} />
+                ) : (
+                  <CrimeInfoWindow card={selectedMarker} />
                 )}
               </InfoWindow>
             )}
