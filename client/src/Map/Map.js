@@ -23,17 +23,22 @@ function MapContainer() {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [searched, setSearched] = useState(false);
   const [viewport, setViewport] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   const onLoad = useCallback((map) => {
     setMap(map);
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       if (
-        US_BOUNDS.north >= latitude >= US_BOUNDS.south &&
-        US_BOUNDS.west <= longitude <= US_BOUNDS.east
-      )
+        US_BOUNDS.north >= latitude &&
+        latitude >= US_BOUNDS.south &&
+        US_BOUNDS.west <= longitude &&
+        longitude <= US_BOUNDS.east
+      ) {
         map.setCenter({ lat: latitude, lng: longitude });
-      else alert("Your current location is not in the US");
+      } else {
+        alert("Your current location is not in the US");
+      }
     });
   });
   useEffect(() => {
@@ -44,8 +49,8 @@ function MapContainer() {
           "http://localhost:8000/api/map/data",
           data
         );
+        console.log("response data", response.data);
         if (response.data) {
-          // console.log(response.data)
           const { markers } = await makeMarkers(response.data);
           if (searched) map.fitBounds(viewport);
           markers.forEach((marker) =>
@@ -53,10 +58,14 @@ function MapContainer() {
           );
         }
       } catch (error) {
-        // console.log(error.message);
+        console.log(error);
       }
     };
-    requestData.map((data) => fetchData(data));
+    if (map) setCurrentLocation(map.getCenter().toJSON());
+
+    requestData.map((data, index) => {
+      setTimeout(() => fetchData(data), 500 * index);
+    });
   }, [requestData]);
 
   const handleDragOrZoom = () => {
@@ -83,12 +92,13 @@ function MapContainer() {
           <GoogleMap
             mapContainerClassName="map-inner"
             center={temp_center}
-            zoom={10}
+            zoom={13}
             options={options}
             onLoad={onLoad}
             onDragEnd={handleDragOrZoom}
             onIdle={handleDragOrZoom}
           >
+            {currentLocation && <Marker position={currentLocation} />}
             {markers &&
               markers.map((marker) => (
                 <Marker
@@ -99,6 +109,7 @@ function MapContainer() {
                     collisionBehavior:
                       window.google.maps.CollisionBehavior
                         .OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+                    animation: window.google.maps.Animation.DROP,
                   }}
                 />
               ))}

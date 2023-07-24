@@ -1,9 +1,10 @@
+const moment = require('moment-timezone');
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
 const trafficSchema = new Schema({
-	description: { type: String, required: true },
+	description: { type: String, required: true, unique: true },
 	detour: { type: String },
 	location: {
 		type: { type: String, default: 'Point' },
@@ -17,10 +18,21 @@ const trafficSchema = new Schema({
 	roadClosed: { type: Boolean, required: true },
 	type: { type: Number, required: true },
 	expiredAt: { type: Date, index: { expires: '3h' } },
-	// place: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' }, //a traffic document belongs to only 1 place
 });
 
-// Create a geospatial index on the location field
 trafficSchema.index({ location: '2dsphere' });
-// Expire ~2h (short)
+trafficSchema.index({ expiredAt: 1 }, { expireAfterSeconds: 1 });
+trafficSchema.plugin(uniqueValidator);
+
+trafficSchema.pre('save', function (next) {
+	const now = new Date();
+	const expirationDate = moment(now)
+		.add(3, 'hours')
+		.tz('America/New_York')
+		.toDate();
+	console.log('Setting expiredAt:', expirationDate);
+	this.expiredAt = expirationDate;
+	next();
+});
+
 module.exports = mongoose.model('Traffic', trafficSchema);

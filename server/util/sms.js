@@ -23,9 +23,16 @@ async function sendAlerts() {
 			return next(error);
 		}
 		if (!traffic || traffic.length === 0) {
-			let newTrafficInfo = await getTrafficInfo(coordinates);
-			traffic = await mapUtil.createTraffic(newTrafficInfo);
+			let newTrafficInfo;
+			try {
+				newTrafficInfo = await getTrafficInfo(coordinates);
+				traffic = await mapUtil.createTraffic(newTrafficInfo);
+			} catch (error) {
+				console.log(error);
+			}
 		}
+		let trafficDes = traffic.map((o) => o.description);
+		trafficDes = trafficDes.join(', ');
 		//get crime data
 		let crime;
 		try {
@@ -41,7 +48,7 @@ async function sendAlerts() {
 			.create({
 				body:
 					'Hello from TravelSafety. Traffic highlights: ' +
-					traffic +
+					trafficDes +
 					'. Crime highlights: ' +
 					crime,
 				to: creator.phone, // Text your number
@@ -51,4 +58,8 @@ async function sendAlerts() {
 	});
 }
 
-const alertJob = schedule.scheduleJob('0 0 * * *', sendAlerts);
+module.exports = {
+	sendSMS: async () => {
+		const alertJob = schedule.scheduleJob('0 0 * * *', sendAlerts);
+	},
+};
