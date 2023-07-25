@@ -80,10 +80,10 @@ async function sendAlerts() {
 		const { phone } = user;
 		client.messages
 			.create({
-				// body: `0 Block W EXCHANGE ST'`,
-				body: `From TravelSafety. Traffic highlights: ${trafficDes}. Crime highlights: ${crimeDes}.`,
+				body: `0 Block W EXCHANGE ST'`,
+				// body: `From TravelSafety. Traffic highlights: ${trafficDes}. Crime highlights: ${crimeDes}.`,
 				to: phone, // Text your number
-				from: '+18777504296', // From a valid Twilio number
+				from: '+18555201425', // From a valid Twilio number
 			})
 			.then((message) => console.log(message));
 	});
@@ -103,6 +103,6 @@ async function sendAlerts() {
 module.exports = {
 	sendSMS: async () => {
 		const alertJob = schedule.scheduleJob('0 1 * * *', sendAlerts);
-		// sendAlerts();
+		sendAlerts();
 	},
 };

@@ -37,8 +37,8 @@ mongoose
 		app.listen(8000);
 		console.log('connected to DB');
 		// sendAlerts();
-		//sendSMS();
-		// scheduleScrape();
+		// sendSMS();
+		scheduleScrape();
 	})
 	.catch((err) => {
 		console.log(err);

@@ -23,16 +23,4 @@ subscriptionSchema.pre('save', function (next) {
 	next();
 });
 
-subscriptionSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
-subscriptionSchema.plugin(uniqueValidator);
-
-subscriptionSchema.pre('save', function (next) {
-	const now = new Date();
-	if (!this.expireAt || this.isModified('duration')) {
-		const daysInMilliseconds = this.duration * 24 * 60 * 60 * 1000;
-		this.expireAt = new Date(now.getTime() + daysInMilliseconds);
-	}
-	next();
-
-	module.exports = mongoose.model('Subscription', subscriptionSchema);
-});
+module.exports = mongoose.model('Subscription', subscriptionSchema);
