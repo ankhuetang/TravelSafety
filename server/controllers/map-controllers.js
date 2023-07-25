@@ -15,13 +15,6 @@ const getSearchByAddress = async (req, res, next) => {
 			rad = 10;
 		}
 
-		// let coordinates;
-		// try {
-		// 	coordinates = await getCoordsForAddress(address);
-		// } catch (error) {
-		// 	console.error(error);
-		// 	return;
-		// }
 		// 1b. Check if place exist:
 		let place;
 		try {
@@ -40,54 +33,53 @@ const getSearchByAddress = async (req, res, next) => {
 		}
 
 		// 2. Get Traffic documents using GeoSearch
-		let traffic;
+		let traffic = [];
 		try {
 			traffic = await mapUtil.getTrafficByLocation(coordinates, rad);
+			console.log('TRAFFIC DB is ', traffic);
 		} catch (error) {
-			// traffic = [];
 			return next(error);
 		}
 		// 3a. Check if no doc return, then make req to api
 		//neu traffic la array thi fai check if traffic.length ===0 nha
-		if (!traffic || traffic.length === 0) {
-			let newTrafficInfo = await getTrafficInfo(coordinates, rad);
-			if (newTrafficInfo.length !== 0) {
-				// 3b. Save traffic (mongo)
-				traffic = await mapUtil.createTraffic(newTrafficInfo);
-				console.log('TRAFFIC IS '.traffic);
-			} else {
-				traffic = [];
-			}
-		}
+		// if (!traffic || traffic.length === 0) {
+		// 	let newTrafficInfo = await getTrafficInfo(coordinates, rad);
+		// 	if (newTrafficInfo.length !== 0) {
+		// 		// 3b. Save traffic (mongo)
+		// 		traffic = await mapUtil.createTraffic(newTrafficInfo);
+		// 		// console.log('TRAFFIC IS '.traffic);
+		// 	} else {
+		// 		traffic = [];
+		// 	}
+		// }
 
 		// 4.Get SafetyByLocation in DB
 		let safetyScore = [];
 		try {
 			safetyScore = await mapUtil.getSafetyByLocation(coordinates, rad);
-			// console.log('safety is ', safetyScore);
+			console.log('SAFETY IS ', safetyScore);
 		} catch (err) {
 			return next(err);
 		}
 
-		// 5a. Check if no doc return, then make req to api
-		if (safetyScore.length === 0) {
-			let newSafetyScore = await getSafetyScore(coordinates, rad);
-			console.log(newSafetyScore);
-			if (newSafetyScore.length !== 0) {
-				// 5b. Save safetyScore (mongo)
-				safetyScore = await mapUtil.createSafety(newSafetyScore);
-			} else {
-				safetyScore = [];
-			}
-		}
+		// // 5a. Check if no doc return, then make req to api
+		// if (safetyScore.length === 0) {
+		// 	let newSafetyScore = await getSafetyScore(coordinates, rad);
+		// 	console.log(newSafetyScore);
+		// 	if (newSafetyScore.length !== 0) {
+		// 		// 5b. Save safetyScore (mongo)
+		// 		safetyScore = await mapUtil.createSafety(newSafetyScore);
+		// 	} else {
+		// 		safetyScore = [];
+		// 	}
+		// }
 
 		//6. Get CrimeByLocation in DB
-		let crime;
+		let crime = [];
 		try {
 			crime = await mapUtil.getCrimeByLocation(coordinates, rad);
-			console.log('CRIME LIST IS ', crime);
+			// console.log('CRIME LIST IS ', crime);
 		} catch (err) {
-			crime = [];
 			return next(err);
 		}
 
