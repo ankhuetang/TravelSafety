@@ -23,5 +23,5 @@ subscriptionSchema.pre('save', function (next) {
 		this.expireAt = new Date(now.getTime() + daysInMilliseconds);
 	}
 	next();
-
+});
 module.exports = mongoose.model('Subscription', subscriptionSchema);
