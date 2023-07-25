@@ -16,7 +16,7 @@ async function getCoordsForAddress(address) {
 	// console.log(data);
 
 	if (!data || data.status === 'ZERO_RESULTS') {
-		throw new Error('Could not find data for given address.');
+		return null;
 	}
 
 	const coordinates = data.results[0].geometry.location;

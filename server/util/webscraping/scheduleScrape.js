@@ -13,6 +13,9 @@ async function scrapeAll() {
 		providence.map(async (doc) => {
 			if (doc.length != 0) {
 				let coords = await getCoordsForAddress(doc[1] + ', Providence');
+				if (coords === null) {
+					return undefined;
+				}
 				return {
 					type: doc[5],
 					address: doc[1],
@@ -41,6 +44,9 @@ async function scrapeAll() {
 				let coords = await getCoordsForAddress(
 					doc[3].substring(6) + ', Chicago'
 				);
+				if (coords === null) {
+					return undefined;
+				}
 				return {
 					type: doc[5],
 					address: doc[3].substring(6),
