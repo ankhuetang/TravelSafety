@@ -38,7 +38,7 @@ mongoose
 		console.log('connected to DB');
 		// sendAlerts();
 		// sendSMS();
-		scheduleScrape();
+		// scheduleScrape();
 	})
 	.catch((err) => {
 		console.log(err);
