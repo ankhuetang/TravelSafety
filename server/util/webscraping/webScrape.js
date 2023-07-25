@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 async function webScrape(url, cssClass) {
 	const browser = await puppeteer.launch({ headless: false });
 	const page = await browser.newPage();
@@ -20,6 +20,8 @@ async function webScrape(url, cssClass) {
 			return cells.map((cell) => cell.textContent.trim());
 		});
 	};
+
+	await sleep(2000);
 
 	const data = await page.evaluate(extractData, query); // Pass extractData function and query variable as arguments
 
