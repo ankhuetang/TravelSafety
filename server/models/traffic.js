@@ -30,7 +30,7 @@ trafficSchema.pre('save', function (next) {
 		.add(3, 'hours')
 		.tz('America/New_York')
 		.toDate();
-	console.log('Setting expiredAt:', expirationDate);
+	// console.log('Setting expiredAt:', expirationDate);
 	this.expiredAt = expirationDate;
 	next();
 });
