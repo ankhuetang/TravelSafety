@@ -1,4 +1,14 @@
-import { ADD_ALERT, FILTER_ALERTS, CLEAR_FILTER } from "../types";
+// NO NEED TO CHANGE
+import {
+  ADD_ALERT,
+  FILTER_ALERTS,
+  CLEAR_FILTER,
+  ALERT_ERROR,
+  GET_ALERTS,
+  CLEAR_ALERTS,
+  SORT_ALERTS,
+  CLEAR_SORT,
+} from "../types";
 
 export default (state, action) => {
   switch (action.type) {
@@ -8,6 +18,7 @@ export default (state, action) => {
         alerts: [...state.alerts, action.payload],
       };
     case FILTER_ALERTS:
+      console.log("FILTER_ALERTS reducer called");
       return {
         ...state,
         filtered: state.alerts.filter((alert) => {
@@ -19,6 +30,21 @@ export default (state, action) => {
       return {
         ...state,
         filtered: null,
+      };
+    case ALERT_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case SORT_ALERTS:
+      return {
+        ...state,
+        sorted: action.payload,
+      };
+    case CLEAR_SORT:
+      return {
+        ...state,
+        sorted: null,
       };
     default:
       return state;

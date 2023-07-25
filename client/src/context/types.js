@@ -6,6 +6,8 @@ export const CLEAR_FILTER = "CLEAR_FILTER";
 export const SET_WARNING = "SET_WARNING";
 export const REMOVE_WARNING = "REMOVE_WARNING";
 export const ALERT_ERROR = "ALERT_ERROR";
+export const SORT_ALERTS = "SORT_ALERTS";
+export const CLEAR_SORT = "CLEAR_SORT";
 
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAIL = "REGISTER_FAIL";

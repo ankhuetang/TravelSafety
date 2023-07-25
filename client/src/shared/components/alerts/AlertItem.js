@@ -1,9 +1,11 @@
 import React from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
 const AlertItem = ({ alert }) => {
-  const { id, location, duration, radius } = alert;
-  console.log("AlertItem component called");
-  console.log(location);
+  // Destructure field address inside alert, rename it to location
+  const { address: location, duration, radius } = alert;
+  // console.log("AlertItem component called");
+  // console.log("AlertItem is", alert);
+  // console.log(location);
 
   return (
     <div className="card bg-light">
