@@ -1,4 +1,5 @@
 const schedule = require('node-schedule');
+const User = require('../models/user');
 require('dotenv').config({ path: '../.env' });
 
 // Your AccountSID and Auth Token from console.twilio.com
@@ -18,17 +19,17 @@ async function sendAlerts() {
 		const { address, radius, creator } = sub;
 		let rad = Math.min(10, Math.round(radius));
 		if (rad === 0) {
-			rad = 1;
+			rad = 10;
 		}
 		const coordinates = await getCoordsForAddress(address);
 		//get traffic data
 
 		// 2. Get Traffic documents using GeoSearch
-		let traffic;
+		let traffic = [];
 		try {
 			traffic = await mapUtil.getTrafficByLocation(coordinates, rad);
+			console.log('TRAFFIC DB is ', traffic);
 		} catch (error) {
-			// traffic = [];
 			return next(error);
 		}
 		// 3a. Check if no doc return, then make req to api
@@ -38,9 +39,7 @@ async function sendAlerts() {
 			if (newTrafficInfo.length !== 0) {
 				// 3b. Save traffic (mongo)
 				traffic = await mapUtil.createTraffic(newTrafficInfo);
-				console.log('TRAFFIC IS '.traffic);
-			} else {
-				traffic = [];
+				// console.log('TRAFFIC IS '.traffic);
 			}
 		}
 
@@ -48,43 +47,45 @@ async function sendAlerts() {
 			(traff) =>
 				traff.type === 1 ||
 				traff.type === 8 ||
-				traffic.type === 8 ||
-				traffic.type === 5
+				traff.type === 5 ||
+				traff.type === 11
 		);
 		if (traffic.length >= 2) {
-			traffic = traffic.slice(0, 2);
+			traffic = traffic.slice(0, 1);
 		}
 		let trafficDes = '';
 		traffic.forEach((traff) => (trafficDes += traff.description));
-		// let trafficDes = traffic.map((o) => o.description);
-		// trafficDes = trafficDes.join(' ');
-		// console.log(traffic);
+
 		//get crime data
 		let crime;
 		try {
-			crime = await mapUtil.getCrimeByLocation(coordinates, radius);
+			crime = await mapUtil.getCrimeByLocation(coordinates, 30);
+			//console.log('crime is ', crime);
 		} catch (err) {
 			return next(err);
 		}
+		if (crime.length >= 2) {
+			crime = crime.slice(0, 1);
+		}
+
 		let crimeDes = '';
 		if (crime.length === 0) {
 			console.log('No crime data available');
 		} else {
-			crime.map((cri) => cri.type + ' at ' + cri.address);
+			crime = crime.map((cri) => cri.type + ' at ' + cri.address);
 			crimeDes = crime.join(' ');
 		}
-		// console.log(crime);
+		//find phone
+		const user = await User.findById(creator);
+		const { phone } = user;
 		client.messages
 			.create({
-				body:
-					'Hello from TravelSafety. Traffic highlights: ' +
-					trafficDes +
-					' Crime highlights: ' +
-					crimeDes,
-				to: creator.phone, // Text your number creator.phone
-				from: '+18555201425', // From a valid Twilio number
+				// body: `0 Block W EXCHANGE ST'`,
+				body: `From TravelSafety. Traffic highlights: ${trafficDes}. Crime highlights: ${crimeDes}.`,
+				to: phone, // Text your number
+				from: '+18777504296', // From a valid Twilio number
 			})
-			.then((message) => console.log(message.sid));
+			.then((message) => console.log(message));
 	});
 }
 
@@ -102,5 +103,6 @@ async function sendAlerts() {
 module.exports = {
 	sendSMS: async () => {
 		const alertJob = schedule.scheduleJob('0 1 * * *', sendAlerts);
+		// sendAlerts();
 	},
 };
