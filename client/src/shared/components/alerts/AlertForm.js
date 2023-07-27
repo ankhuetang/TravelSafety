@@ -23,7 +23,6 @@ const AlertForm = () => {
     coordinate: null,
   });
   const { location, duration, radius, coordinate } = alert;
-  // const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -76,7 +75,6 @@ const AlertForm = () => {
   const formIsValid = location !== null && duration !== "" && radius !== "";
 
   return (
-    // <LoadScript googleMapsApiKey={API_KEY} libraries={["places"]}>
     <Box component="main" sx={form}>
       <div>
         <Typography component="h1" fontSize="xl2" fontWeight="lg">
@@ -119,14 +117,13 @@ const AlertForm = () => {
           </Button>
         ) : (
           <fieldset disabled>
-            <Button type="submit" fullWidth>
+            <Button type="submit" fullWidth disabled>
               Subscribe
             </Button>
           </fieldset>
         )}
       </form>
     </Box>
-    // </LoadScript>
   );
 };
 
