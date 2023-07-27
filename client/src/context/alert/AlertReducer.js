@@ -12,25 +12,10 @@ import {
 
 export default (state, action) => {
   switch (action.type) {
-    case GET_ALERTS:
-      return {
-        ...state,
-        alerts: action.payload,
-        loading: false,
-      };
     case ADD_ALERT:
       return {
         ...state,
         alerts: [...state.alerts, action.payload],
-        loading: false,
-      };
-    case CLEAR_ALERTS:
-      return {
-        ...state,
-        alerts: [],
-        filtered: null,
-        error: null,
-        current: null,
       };
     case FILTER_ALERTS:
       console.log("FILTER_ALERTS reducer called");
@@ -38,7 +23,7 @@ export default (state, action) => {
         ...state,
         filtered: state.alerts.filter((alert) => {
           const regex = new RegExp(`${action.payload}`, "gi");
-          return alert.address.match(regex);
+          return alert.location.match(regex);
         }),
       };
     case CLEAR_FILTER:

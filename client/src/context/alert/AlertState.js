@@ -1,6 +1,5 @@
-// NO NEED TO CHANGE
 import React, { useReducer } from "react";
-// import { v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid";
 import alertReducer from "./AlertReducer";
 import alertContext from "./AlertContext";
 import {
@@ -17,7 +16,11 @@ import axios from "axios";
 
 const AlertState = (props) => {
   const initialState = {
-    alerts: [],
+    alerts: [
+      // { id: 1, location: "Hanoi", radius: 1, duration: 1 },
+      // { id: 2, location: "China", radius: 2, duration: 2 },
+      // { id: 3, location: "USA", radius: 3, duration: 3 },
+    ],
     filtered: null,
     error: null,
     sorted: null,
@@ -77,7 +80,6 @@ const AlertState = (props) => {
   const clearAlerts = (id) => {
     dispatch({ type: CLEAR_ALERTS });
   };
-
   // Filter alerts
   const filterAlerts = (text) => {
     console.log("filterAlerts called with text:", text);
@@ -104,7 +106,6 @@ const AlertState = (props) => {
         sorted: state.sorted,
         getAlerts,
         addAlert,
-        clearAlerts,
         filterAlerts,
         clearFilter,
         sortAlerts,

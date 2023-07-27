@@ -1,22 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 import AlertContext from "../../../context/alert/AlertContext";
-import {
-  Box,
-  Button,
-  FormControl,
-  Input,
-  Typography,
-  FormLabel,
-} from "@mui/joy";
-import { form } from "../styles";
 
 const AlertForm = () => {
   const alertContext = useContext(AlertContext);
   const { addAlert } = alertContext;
-  const [autocompleteObject, setAutocompleteObject] = useState(null);
   const [alert, setAlert] = useState({
-    // autocompleteObject: null, // This might be causing a problem
+    autocompleteObject: null,
     location: "",
     duration: "",
     radius: "",

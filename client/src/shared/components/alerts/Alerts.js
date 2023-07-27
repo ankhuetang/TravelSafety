@@ -29,6 +29,7 @@ const Alerts = () => {
       </Box>
     );
   }
+
   return (
     <Box component="main" sx={form}>
       {/* <Stack direction="row" spacing={10}>
