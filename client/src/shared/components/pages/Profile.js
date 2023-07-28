@@ -7,6 +7,7 @@ import customTheme from "../../theme";
 import { GlobalStyles, CssBaseline, Box } from "@mui/joy";
 import { root, formSide, formContainer, alertSide } from "../styles";
 import { LoadScript } from "@react-google-maps/api";
+import Circle from "../misc/Circle";
 
 const Profile = () => {
   const authContext = useContext(AuthContext);
@@ -19,6 +20,30 @@ const Profile = () => {
   }, []);
 
   return (
+    // <LoadScript googleMapsApiKey={API_KEY} libraries={["places", "geometry"]}>
+    //   <CssVarsProvider
+    //     defaultMode="light"
+    //     disableTransitionOnChange
+    //     theme={customTheme}
+    //   >
+    //     <CssBaseline />
+    //     <GlobalStyles
+    //       styles={{
+    //         ":root": root,
+    //       }}
+    //     />
+    //     <Box sx={(theme) => formSide}>
+    //       <Box sx={formContainer}>
+    //         <AlertForm />
+    //       </Box>
+    //     </Box>
+    //     <Box sx={(theme) => alertSide}>
+    //       <Box sx={formContainer}>
+    //         <Alerts />
+    //       </Box>
+    //     </Box>
+    //   </CssVarsProvider>
+    // </LoadScript>
     <LoadScript googleMapsApiKey={API_KEY} libraries={["places", "geometry"]}>
       <CssVarsProvider
         defaultMode="light"
@@ -31,16 +56,19 @@ const Profile = () => {
             ":root": root,
           }}
         />
-        <Box sx={(theme) => formSide}>
-          <Box sx={formContainer}>
-            <AlertForm />
+        <div style={{ display: "flex" }}>
+          <Box sx={(theme) => formSide}>
+            <Box sx={formContainer}>
+              <AlertForm />
+            </Box>
           </Box>
-        </Box>
-        <Box sx={(theme) => alertSide}>
-          <Box sx={formContainer}>
-            <Alerts />
+          {/* <Circle /> */}
+          <Box sx={(theme) => alertSide}>
+            <Box sx={formContainer}>
+              <Alerts />
+            </Box>
           </Box>
-        </Box>
+        </div>
       </CssVarsProvider>
     </LoadScript>
   );

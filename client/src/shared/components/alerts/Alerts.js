@@ -1,10 +1,12 @@
 import React, { useContext, Fragment, useEffect, useState } from "react";
 import AlertContext from "../../../context/alert/AlertContext";
 import AlertItem from "./AlertItem";
-import { Box, Stack, Grid } from "@mui/joy";
+import { Box, Grid } from "@mui/joy";
 import { form } from "../styles";
 import AlertFilter from "./AlertFilter";
 import AlertSort from "./AlertSort";
+import rascalGif from "../../../assets/rascal-nothing-to-see-here.gif";
+import noResultGif from "../../../assets/no-results.gif";
 
 const Alerts = () => {
   const alertContext = useContext(AlertContext);
@@ -21,21 +23,20 @@ const Alerts = () => {
   if (alerts.length === 0) {
     return (
       <Box component="main" sx={form}>
-        <AlertFilter />
-        <AlertSort />
-        <h4>
-          It will feel safer if there are some alerts here. Please add an alert!
-        </h4>
+        <Grid container spacing={1}>
+          <Grid item xs={8}>
+            <AlertFilter />
+          </Grid>
+          <Grid item xs={4}>
+            <AlertSort />
+          </Grid>
+        </Grid>
+        <img src={rascalGif} alt="No alerts" />
       </Box>
     );
   }
   return (
     <Box component="main" sx={form}>
-      {/* <Stack direction="row" spacing={10}>
-        <AlertFilter />
-        <AlertSort />
-      </Stack> */}
-
       <Grid container spacing={1}>
         <Grid item xs={8}>
           <AlertFilter />
@@ -44,43 +45,29 @@ const Alerts = () => {
           <AlertSort />
         </Grid>
       </Grid>
-      {/* {filtered !== null ? (
-        filtered.length > 0 ? (
-          filtered.map((alert) => <AlertItem key={alert._id} alert={alert} />)
-        ) : (
-          <h4>We couldn't find any alert that matches your description</h4>
-        )
-      ) : (
-        alerts.map((alert) => <AlertItem key={alert._id} alert={alert} />)
-      )} */}
 
       {sorted !== null && sorted.length > 0 ? (
         <Fragment>
-          {/* <h5>Rendering sorted</h5> */}
           {sorted.map((alert) => (
             <AlertItem key={alert._id} alert={alert} />
           ))}
         </Fragment>
       ) : sorted !== null && sorted.length === 0 ? (
         <Fragment>
-          {/* <h5>Sorted is displayed, but there is no alerts</h5> */}
-          <h4>We couldn't find any alerts that match your description</h4>
+          <img src={noResultGif} alt="No match" />
         </Fragment>
       ) : filtered !== null && filtered.length > 0 ? (
         <Fragment>
-          {/* <h5>Rendering filtered</h5> */}
           {filtered.map((alert) => (
             <AlertItem key={alert._id} alert={alert} />
           ))}
         </Fragment>
       ) : filtered !== null && filtered.length === 0 ? (
         <Fragment>
-          {/* <h5>Filtered is displayed, but there is no alerts</h5> */}
-          <h4>We couldn't find any alerts that match your description</h4>
+          <img src={noResultGif} alt="No match" />
         </Fragment>
       ) : (
         <Fragment>
-          {/* <h5>Both sorted and filtered are null, rendering alerts</h5> */}
           {alerts.map((alert) => (
             <AlertItem key={alert._id} alert={alert} />
           ))}
