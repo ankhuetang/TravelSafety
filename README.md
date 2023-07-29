@@ -20,22 +20,7 @@ Our full-stack web app aims to improve safety information in traditional map app
 - Shortest Path Suggestion: Our app suggests the shortest route among multiple destinations, showing safety tags and infomation for the route.
 
 ## Technologies 
-Frontend:
-- React.js
-- Material UI
-- Bootstrap
-
-Backend:
-- Node.js
-- Express.js
-- Cron jobs
-- Web scraping
-
-Database:
-- MongoDB
-
-APIs:
-- Google Maps API
-- Microsoft Traffic API
-- Amadeus API
-- Sendrig api
+- Frontend: React.js, Material UI, Bootstrap, Context API
+- Backend: Node.js, Express.js, Cron jobs, Web scraping
+- Database: MongoDB
+- APIs: Google Maps API, Microsoft Traffic API, Amadeus API, Sendgrid API
