@@ -1,6 +1,10 @@
 # Travel Safety Map
 
-Travel Safety Map is a web application that provides users with information on the safety level, crime and traffic accidents to support users to have safe travelling experiences.
+Our full-stack web app aims to improve safety information in traditional map apps. It displays safety scores, traffic data, and crime incidents on a map, enabling users to receive safety alerts via email.
+
+## Walkthrough Video
+
+<img src="./Walkthrough.gif" alt="GIF Loading">
 
 ## Contributors:
 - Khue Tang
