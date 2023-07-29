@@ -24,13 +24,16 @@ Frontend:
 - React.js
 - Material UI
 - Bootstrap
+
 Backend:
 - Node.js
 - Express.js
 - Cron jobs
 - Web scraping
+
 Database:
 - MongoDB
+
 APIs:
 - Google Maps API
 - Microsoft Traffic API
