@@ -5,7 +5,7 @@ Our full-stack web app aims to improve safety information in traditional map app
 
 ## Walkthrough Video
 
-[Link to Walkthrough Video/GIF]
+<img src="./Walkthrough.gif" alt="GIF Loading">
 
 ## Contributors:
 - Khue Tang
