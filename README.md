@@ -1,14 +1,14 @@
 # SafeTraveler
 > Your ultimate travel guide: a to-go app to explore and stay informed about the safety of places
 
-Our full-stack web app aims to improve safety information in traditional map apps. It displays safety scores, traffic data, and crime incidents on a map, enabling users to receive safety alerts via email.
+Our full-stack web app aims to improve safety information in traditional map apps. It displays safety scores, traffic data, and crime incidents on a customized Google map, enabling users to receive safety alerts via email.
 
 ## Walkthrough Video
 
 <img src="./Walkthrough.gif" alt="GIF Loading">
 
 ## Contributors:
-- Khue Tang
+- Khue (Kay) Tang
 - Phuong Cao
 - Ngoc Doan
 - Cuong Nguyen  
